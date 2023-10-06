@@ -85,7 +85,7 @@ const DriverHomePage = () => {
       ]
     );
   };
-  handleCreateButton = () => {
+  const handleCreateButton = () => {
     navigation.navigate("DriverRideRegistration");
   };
   return (
