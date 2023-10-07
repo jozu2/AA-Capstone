@@ -132,6 +132,9 @@ const DriverRideRegistration = () => {
           UID: userID,
           postID: uniqueID,
         },
+        notif: {
+          showRedDot: false,
+        },
       });
 
       dispatch(setDestination(null));

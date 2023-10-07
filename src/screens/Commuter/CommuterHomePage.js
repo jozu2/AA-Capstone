@@ -394,7 +394,7 @@ const CommuterHomePage = () => {
                             paddingTop: 6,
                             color: "#636363",
                           }}
-                        >{`${card.Schedule.seatAvailable} / ${card.Schedule.seatAvailable}`}</Text>
+                        >{`${card.Schedule.occupiedSeat} / ${card.Schedule.seatAvailable}`}</Text>
                       </View>
                     </View>
                   </View>

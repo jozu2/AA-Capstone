@@ -6,13 +6,14 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { db } from "./../../../config";
-import { ref, get, remove } from "firebase/database";
+import { ref, remove, onValue } from "firebase/database";
 import { selectUserId, setViewBookings } from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { Alert } from "react-native";
+import Entypo from "react-native-vector-icons/Entypo";
 const DriverHomePage = () => {
   const navigation = useNavigation();
   const userID = useSelector(selectUserId);
@@ -20,43 +21,36 @@ const DriverHomePage = () => {
   const mapRef = useRef(null);
   const API_KEY = "AIzaSyCU46T5I3BvJF3_uQHta5XGih_xljGYt-I";
   const dispatch = useDispatch();
-
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const dbRef = ref(db, `POSTED_RIDES`);
-        const snapshot = await get(dbRef);
-        const requestData = snapshot.val();
+    const dbRef = ref(db, "POSTED_RIDES");
 
-        if (!requestData || Object.keys(requestData).length === 0) {
-          return;
-        }
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      const requestData = snapshot.val();
 
-        const requests = Object.keys(requestData).map((key) => ({
-          id: key,
-          ...requestData[key],
-        }));
-
-        const filteredRequests = requests.filter((request) => {
-          return request.driverProfile.UID === userID;
-        });
-
-        if (!filteredRequests) {
-          return;
-        }
-
-        if (requests.length > 0) {
-          setFetchedData(filteredRequests);
-        } else {
-          console.log("error fetching");
-        }
-      } catch (error) {
-        console.error("Error:", error);
+      if (!requestData || Object.keys(requestData).length === 0) {
+        return;
       }
-    }
 
-    fetchData();
-  }, [fetchedData]);
+      const requests = Object.keys(requestData).map((key) => ({
+        id: key,
+        ...requestData[key],
+      }));
+
+      const filteredRequests = requests.filter((request) => {
+        return request.driverProfile.UID === userID;
+      });
+
+      if (!filteredRequests) return;
+      if (filteredRequests.length > 0) {
+        setFetchedData(filteredRequests);
+      } else {
+        console.log("No matching data found.");
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [userID]);
 
   const handleCloseBtn = (id) => {
     Alert.alert(
@@ -146,11 +140,11 @@ const DriverHomePage = () => {
                           style={{ position: "absolute", top: 23, right: 20 }}
                         >
                           <TouchableOpacity
-                            onPress={() =>
+                            onPress={() => {
                               handleCloseBtn(
                                 `${data.driverProfile.UID}${data.driverProfile.postID}`
-                              )
-                            }
+                              );
+                            }}
                           >
                             <EvilIcons
                               name="close"
@@ -264,6 +258,7 @@ const DriverHomePage = () => {
                                   DriverData: data,
                                 })
                               );
+
                               navigation.navigate("ViewBooking");
                             } else {
                               dispatch(
@@ -282,6 +277,19 @@ const DriverHomePage = () => {
                             size={30}
                             style={styles.bookingBtn}
                           />
+                          {data.notif.showRedDot == true && (
+                            <Entypo
+                              name="dot-single"
+                              color={"red"}
+                              size={45}
+                              style={{
+                                position: "absolute",
+                                top: -2,
+                                alignSelf: "flex-end",
+                                right: 18,
+                              }}
+                            />
+                          )}
                         </Pressable>
                         <Pressable style={styles.Btn}>
                           <Text style={styles.Start}>START</Text>

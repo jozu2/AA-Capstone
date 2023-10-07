@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Feather from "react-native-vector-icons/Feather";
+
 import {
   selectViewBookings,
   setUserLocationBooked,
@@ -100,6 +102,16 @@ const ViewUserAccepted = () => {
                     >
                       <Text style={{ fontSize: 18, fontWeight: "400" }}>
                         {booking.userInfo.userName}
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "400",
+                            color: "green",
+                          }}
+                        >
+                          {`  -  ${booking.rideInfo.passengerCount}`}
+                          <Feather name="user" size={15} color={"green"} />
+                        </Text>
                       </Text>
                       <Text
                         style={{

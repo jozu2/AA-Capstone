@@ -25,31 +25,7 @@ const ViewUserBookingDetails = () => {
   const userLocation = useSelector(selectUserLocationBooked);
   const driverCoordinates = bookingData.DriverData.coordinates;
   const DriverPostID = `${bookingData.DriverData.driverProfile.UID}${bookingData.DriverData.driverProfile.postID}`;
-  const [filteredLength, setFilteredLength] = useState(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const dbRef = ref(db, `POSTED_RIDES/${DriverPostID}/Request`);
-        const snapshot = await get(dbRef);
-        const requestData = snapshot.val();
-        const requests = Object.keys(requestData).map((key) => ({
-          id: key,
-          ...requestData[key],
-        }));
-
-        const filteredRequests = requests.filter((request) => {
-          return request.status.isAccepted;
-        });
-
-        setFilteredLength(filteredRequests.length);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
   return (
     <View style={{ flex: 1, padding: 10 }}>
       <View
@@ -83,17 +59,30 @@ const ViewUserBookingDetails = () => {
           <TouchableOpacity
             style={styles.btn}
             onPress={() => {
-              if (
-                filteredLength <= bookingData.DriverData.Schedule.seatAvailable
-              ) {
+              const availSeat =
+                bookingData.DriverData.Schedule.seatAvailable -
+                bookingData.DriverData.Schedule.occupiedSeat;
+
+              if (availSeat >= userLocation.rideInfo.passengerCount) {
                 const studentIsAcceptedRef = ref(
                   db,
                   `POSTED_RIDES/${DriverPostID}/Request/${userLocation.userInfo.userID}/status/isAccepted`
                 );
                 set(studentIsAcceptedRef, true);
+
+                const sumOfPassengerSeatOccupied =
+                  parseInt(bookingData.DriverData.Schedule.occupiedSeat) +
+                  parseInt(userLocation.rideInfo.passengerCount);
+
+                const addOccupiedSeat = ref(
+                  db,
+                  `POSTED_RIDES/${DriverPostID}/Schedule/occupiedSeat`
+                );
+                set(addOccupiedSeat, sumOfPassengerSeatOccupied);
+
                 navigation.replace("ViewBooking");
               } else {
-                alert("No Seat Available to Accept the User.");
+                alert("error: beyond Maximum Passenger Reached");
                 navigation.replace("ViewBooking");
               }
             }}

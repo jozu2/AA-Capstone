@@ -11,7 +11,7 @@ import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { db } from "../../../config";
-import { get, ref } from "firebase/database";
+import { get, ref, set } from "firebase/database";
 
 const ViewBookings = () => {
   const bookingData = useSelector(selectViewBookings);
@@ -40,6 +40,12 @@ const ViewBookings = () => {
 
         if (filteredRequests.length > 0) {
           const randomRequest = filteredRequests;
+
+          const showRedDotRef = ref(
+            db,
+            `POSTED_RIDES/${DriverPostID}/notif/showRedDot`
+          );
+          set(showRedDotRef, false);
           setFilteredBookingData(randomRequest);
         } else {
         }
@@ -65,7 +71,6 @@ const ViewBookings = () => {
           filteredBookingData.map((booking, key) => (
             <View key={key} style={styles.mainContainer}>
               <View>
-                {console.log(booking)}
                 <TouchableOpacity
                   style={[tw`shadow-md`, styles.container]}
                   onPress={() => {

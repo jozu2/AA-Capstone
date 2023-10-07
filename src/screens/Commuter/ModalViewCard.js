@@ -58,6 +58,9 @@ const ModalViewCard = () => {
   const userProfile = useSelector(selectUserProfile);
   const userID = useSelector(selectUserId);
   const userName = `${userProfile?.firstName} ${userProfile?.lastName}`;
+
+  const DriverPostID = `${cardData.driverProfile.UID}${cardData.driverProfile.postID}`;
+
   const handleRequestRide = () => {
     if (cardData && userProfile && centerLocation) {
       set(
@@ -68,7 +71,12 @@ const ModalViewCard = () => {
         {
           latitude: centerLocation.latitude,
           longitude: centerLocation.longitude,
-          rideInfo: rideInfo,
+          rideInfo: {
+            duration: rideInfo.duration,
+            distance: rideInfo.distance,
+            description: rideInfo.description,
+            passengerCount: numberOfPassenger,
+          },
           userInfo: {
             userName: userName,
             userID: userID,
@@ -79,6 +87,12 @@ const ModalViewCard = () => {
           },
         }
       );
+
+      const showRedDotRef = ref(
+        db,
+        `POSTED_RIDES/${DriverPostID}/notif/showRedDot`
+      );
+      set(showRedDotRef, true);
 
       alert("Request Successful");
     } else {
@@ -104,34 +118,6 @@ const ModalViewCard = () => {
     }
     navigation.replace("UserNavHome");
   };
-  const [filteredLength, setFilteredLength] = useState(null);
-
-  const DriverPostID = `${cardData.driverProfile.UID}${cardData.driverProfile.postID}`;
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const dbRef = ref(db, `POSTED_RIDES/${DriverPostID}/Request`);
-        const snapshot = await get(dbRef);
-        const requestData = snapshot.val();
-        if (!requestData) return;
-        const requests = Object.keys(requestData).map((key) => ({
-          id: key,
-          ...requestData[key],
-        }));
-
-        const filteredRequests = requests.filter((request) => {
-          return request.status.isAccepted;
-        });
-        const seat = cardData.Schedule.seatAvailable;
-        const availSeat = seat - filteredRequests.length;
-        setFilteredLength(availSeat);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -197,15 +183,17 @@ const ModalViewCard = () => {
           borderWidth: 1,
         }}
         onPress={() => {
+          const AvailSeat =
+            cardData.Schedule.seatAvailable - cardData.Schedule.occupiedSeat;
           if (numberOfPassenger === "") {
             alert("Please fill up the field");
             return;
           }
 
-          if (numberOfPassenger <= filteredLength) {
+          if (numberOfPassenger <= AvailSeat) {
             setIsSet(true);
           } else {
-            alert(`Sorry... current seat Available ${filteredLength}`);
+            alert(`Sorry... current seat Available ${AvailSeat}`);
             return;
           }
           setIsSet(!isSet);
