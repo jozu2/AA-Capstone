@@ -136,6 +136,12 @@ const CommuterHomePage = () => {
               infinite={true}
               verticalSwipe={false}
               ref={swiperRef}
+              onSwipedRight={() => {
+                if (selectedCardData) {
+                  dispatch(setCardData(selectedCardData));
+                  navigation.navigate("ModalViewCard");
+                }
+              }}
               overlayLabels={{
                 right: {
                   title: " View ",

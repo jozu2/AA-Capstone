@@ -123,6 +123,7 @@ const DriverRideRegistration = () => {
           When: when,
           timeOfDeparture: tod,
           seatAvailable: seatAvail,
+          occupiedSeat: 0,
         },
         driverProfile: {
           firstName: userProfile.firstName,

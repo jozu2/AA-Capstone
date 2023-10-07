@@ -6,6 +6,7 @@ import {
   setUserLocationBooked,
 } from "../../redux/navSlice";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import Feather from "react-native-vector-icons/Feather";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -56,7 +57,7 @@ const ViewBookings = () => {
         {!filteredBookingData && (
           <View>
             <Text style={{ alignSelf: "center", fontSize: 30 }}>
-              NO BOOKINGS ATM
+              NO REQUEST ATM
             </Text>
           </View>
         )}
@@ -64,6 +65,7 @@ const ViewBookings = () => {
           filteredBookingData.map((booking, key) => (
             <View key={key} style={styles.mainContainer}>
               <View>
+                {console.log(booking)}
                 <TouchableOpacity
                   style={[tw`shadow-md`, styles.container]}
                   onPress={() => {
@@ -83,6 +85,17 @@ const ViewBookings = () => {
                     >
                       <Text style={{ fontSize: 18, fontWeight: "400" }}>
                         {booking.userInfo.userName}
+
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "400",
+                            color: "green",
+                          }}
+                        >
+                          {`  -  ${booking.rideInfo.passengerCount}`}
+                          <Feather name="user" size={15} color={"green"} />
+                        </Text>
                       </Text>
                       <Text
                         style={{

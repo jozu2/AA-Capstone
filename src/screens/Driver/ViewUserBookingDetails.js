@@ -26,7 +26,7 @@ const ViewUserBookingDetails = () => {
   const driverCoordinates = bookingData.DriverData.coordinates;
   const DriverPostID = `${bookingData.DriverData.driverProfile.UID}${bookingData.DriverData.driverProfile.postID}`;
   const [filteredLength, setFilteredLength] = useState(null);
-  const [filteredBookingData, setFilteredBookingData] = useState(null);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -199,6 +199,9 @@ const ViewUserBookingDetails = () => {
           <Text>PICK UP: {userLocation.rideInfo.description}</Text>
           <Text>
             DISTANCE: {`${userLocation.rideInfo.distance} Kilometers`}
+          </Text>
+          <Text>
+            No. of PASSENGER: {`${userLocation.rideInfo.passengerCount} `}
           </Text>
         </View>
       </View>
