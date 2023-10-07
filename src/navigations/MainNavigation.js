@@ -41,7 +41,9 @@ const MainNavigation = () => {
       if (user) {
         const userFirestoreData = JSON.parse(userFirestore);
         dispatch(setUserProfile(userFirestoreData));
-
+        const userDatax = JSON.parse(user);
+        const userUIDx = userDatax.uid;
+        dispatch(setUserId(userUIDx));
         dispatch(setUserIsLoggedin("student"));
         setTimeout(() => {
           setIsLoading(false); // Set loading to false after 2 seconds

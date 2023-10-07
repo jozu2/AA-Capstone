@@ -89,7 +89,7 @@ const ModalViewCard = () => {
       set(ref(db, `REQUEST_RIDES/${userID}`), {
         latitude: centerLocation.latitude,
         longitude: centerLocation.longitude,
-        rideInfo: rideInfo,
+        rideInfo: { rideInfo, passengerCount: numberOfPassenger },
         userInfo: {
           userName: userName,
           userID: userID,
@@ -199,12 +199,16 @@ const ModalViewCard = () => {
         onPress={() => {
           if (numberOfPassenger === "") {
             alert("Please fill up the field");
+            return;
           }
+
           if (numberOfPassenger <= filteredLength) {
             setIsSet(true);
           } else {
             alert(`Sorry... current seat Available ${filteredLength}`);
+            return;
           }
+          setIsSet(!isSet);
         }}
       >
         <Text style={{ fontSize: 18 }}>

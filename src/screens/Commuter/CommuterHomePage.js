@@ -27,7 +27,7 @@ const CommuterHomePage = () => {
 
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
-
+      if (!data) return;
       if (data) {
         const dataArray = Object.values(data);
         setFetchedData(dataArray);
@@ -38,10 +38,12 @@ const CommuterHomePage = () => {
       }
     });
   }, []);
+
   const swiperRef = useRef(null);
   const handleOpenDrawer = () => {
     navigation.openDrawer();
   };
+
   return (
     <View style={[tw`flex-1`, { backgroundColor: "#ebebeb" }]}>
       <View style={[tw`shadow-lg`, styles.topBar]}>
