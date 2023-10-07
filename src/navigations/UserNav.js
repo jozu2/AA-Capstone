@@ -10,30 +10,6 @@ import UserProfile from "../screens/Commuter/UserProfile";
 const UserNav = () => {
   const Drawer = createDrawerNavigator();
   return (
-    // <Tab.Navigator
-    //   screenOptions={({ route }) => ({
-    //     headerShown: false,
-    //     tabBarShowLabel: false,
-    //     tabBarHideOnKeyboard: true,
-    //     tabBarInactiveTintColor: "gray",
-    //     tabBarStyle: styles.tabBarStyle,
-    //     tabBarActiveTintColor: "red",
-    //     tabBarIcon: ({ color, size, focused }) => {
-    //       let iconName;
-
-    //       if (route.name === "CommuterHomePage") {
-    //         iconName = focused ? "ios-home-sharp" : "ios-home-outline";
-    //       } else if (route.name === "CommuterSettings") {
-    //         iconName = focused ? "settings" : "settings-outline";
-    //       }
-    //       return <Ionicons name={iconName} size={28} color={color} />;
-    //     },
-    //   })}
-    // >
-    //   <Tab.Screen name="CommuterHomePage" component={CommuterHomePage} />
-    //   <Tab.Screen name="CommuterSettings" component={CommuterSettings} />
-    // </Tab.Navigator>
-
     <View style={styles.container}>
       <Drawer.Navigator
         drawerContent={(props) => <CustomDrawer {...props} />}

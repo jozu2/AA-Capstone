@@ -1,28 +1,21 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  selectUserLocationBooked,
   selectViewBookings,
   setUserLocationBooked,
 } from "../../redux/navSlice";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
-import MapView, { Marker } from "react-native-maps";
-import MapViewDirections from "react-native-maps-directions";
-import { useRef } from "react";
 import { useEffect } from "react";
 import { db } from "../../../config";
 import { get, ref } from "firebase/database";
 
 const ViewUserAccepted = () => {
   const bookingData = useSelector(selectViewBookings);
-  const bookingDataX = bookingData.Request;
-  const bookingKeys = Object.keys(bookingDataX);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const user = useSelector(selectUserLocationBooked);
   const [filteredBookingData, setFilteredBookingData] = useState(null);
 
   const DriverPostID = `${bookingData.DriverData.driverProfile.UID}${bookingData.DriverData.driverProfile.postID}`;
@@ -32,6 +25,8 @@ const ViewUserAccepted = () => {
         const dbRef = ref(db, `POSTED_RIDES/${DriverPostID}/Request`);
         const snapshot = await get(dbRef);
         const requestData = snapshot.val();
+
+        if (!requestData) return;
         const requests = Object.keys(requestData).map((key) => ({
           id: key,
           ...requestData[key],

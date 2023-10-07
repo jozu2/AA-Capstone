@@ -56,7 +56,7 @@ const DriverHomePage = () => {
     }
 
     fetchData();
-  }, []);
+  }, [fetchedData]);
 
   const handleCloseBtn = (id) => {
     Alert.alert(
@@ -85,12 +85,19 @@ const DriverHomePage = () => {
       ]
     );
   };
-  handleCreateButton = () => {
+  const handleCreateButton = () => {
     navigation.navigate("DriverRideRegistration");
   };
   return (
     <View>
       <View style={[tw`shadow-lg`, styles.topBar]}>
+        <EvilIcons
+          style={{ position: "absolute", bottom: 24, left: 15 }}
+          name={"navicon"}
+          size={40}
+          color={"#242424"}
+          onPress={() => navigation.openDrawer()}
+        />
         <Text style={styles.mainTitle}>Angkas Atad</Text>
         <Text style={styles.title}>ride Along</Text>
       </View>
@@ -132,7 +139,7 @@ const DriverHomePage = () => {
                             />
                             <Text
                               style={{ paddingLeft: 5 }}
-                            >{`1/${data.Schedule.seatAvailable}`}</Text>
+                            >{`${data.Schedule.occupiedSeat}/${data.Schedule.seatAvailable}`}</Text>
                           </TouchableOpacity>
                         </View>
                         <View

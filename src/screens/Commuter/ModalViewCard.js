@@ -11,8 +11,8 @@ import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { ref, set } from "firebase/database";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { get, ref, set } from "firebase/database";
 import { db } from "../../../config";
 const ModalViewCard = () => {
   const cardData = useSelector(selectedCardData);
@@ -23,6 +23,7 @@ const ModalViewCard = () => {
     latitude: 15.0794,
     longitude: 120.62,
   });
+  const [numberOfPassenger, setNumberOfPassenger] = useState("");
   const [rideInfo, setRideInfo] = useState({
     duration: "",
     distance: "",
@@ -31,6 +32,7 @@ const ModalViewCard = () => {
   const [isSet, setIsSet] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const onRegionChange = (region) => {
+    if (numberOfPassenger === "") return;
     if (!isSet) {
       setCenterLocation({
         latitude: region.latitude,
@@ -44,9 +46,7 @@ const ModalViewCard = () => {
     }, 2000);
   }, []);
 
-  const cardDataTime = cardData.Schedule.timeOfDeparture;
   const resultDuration = Math.floor(rideInfo.duration);
-
   const integerPartx = Math.floor(rideInfo.distance);
   const decimalPartx = rideInfo.distance - integerPartx;
   const flooredDecimalPartx = Math.floor(decimalPartx * 10) / 10;
@@ -54,11 +54,7 @@ const ModalViewCard = () => {
   const originalTime = "06:54 AM";
   const parsedTime = new Date(`2023-10-04 ${originalTime}`);
   parsedTime.setMinutes(parsedTime.getMinutes() + 17);
-  const formattedTime = parsedTime.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
+
   const userProfile = useSelector(selectUserProfile);
   const userID = useSelector(selectUserId);
   const userName = `${userProfile?.firstName} ${userProfile?.lastName}`;
@@ -83,6 +79,7 @@ const ModalViewCard = () => {
           },
         }
       );
+
       alert("Request Successful");
     } else {
       alert("Incomplete Information");
@@ -107,19 +104,37 @@ const ModalViewCard = () => {
     }
     navigation.replace("UserNavHome");
   };
+  const [filteredLength, setFilteredLength] = useState(null);
+
+  const DriverPostID = `${cardData.driverProfile.UID}${cardData.driverProfile.postID}`;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const dbRef = ref(db, `POSTED_RIDES/${DriverPostID}/Request`);
+        const snapshot = await get(dbRef);
+        const requestData = snapshot.val();
+        if (!requestData) return;
+        const requests = Object.keys(requestData).map((key) => ({
+          id: key,
+          ...requestData[key],
+        }));
+
+        const filteredRequests = requests.filter((request) => {
+          return request.status.isAccepted;
+        });
+        const seat = cardData.Schedule.seatAvailable;
+        const availSeat = seat - filteredRequests.length;
+        setFilteredLength(availSeat);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* <View
-        style={tw`flex flex-row pt-13  items-center pb-5 bg-white shadow-md`}
-      >
-        <Ionicons
-          name={"arrow-back"}
-          color={"black"}
-          size={40}
-          style={tw`ml-2`}
-          onPress={() => navigation.goBack()}
-        />
-      </View> */}
       {isSet && (
         <View
           style={{
@@ -143,6 +158,7 @@ const ModalViewCard = () => {
             <Text>{`Estimated Time of Arrival ${resultDuration} minutes`}</Text>
             <Text>{`Distance: ${resultDistancex} km`}</Text>
           </View>
+
           <View>
             <TouchableOpacity
               onPress={handleRequestRide}
@@ -181,14 +197,62 @@ const ModalViewCard = () => {
           borderWidth: 1,
         }}
         onPress={() => {
-          setIsSet(!isSet);
+          if (numberOfPassenger === "") {
+            alert("Please fill up the field");
+          }
+          if (numberOfPassenger <= filteredLength) {
+            setIsSet(true);
+          } else {
+            alert(`Sorry... current seat Available ${filteredLength}`);
+          }
         }}
       >
         <Text style={{ fontSize: 18 }}>
           {isSet ? "Cancel" : "SET PICKUP LOCATION MARK"}
         </Text>
       </Pressable>
-      <View style={{ flex: 1, backgroundColor: "red" }}>
+      <View style={{ flex: 1 }}>
+        {!isSet && (
+          <View>
+            <Text
+              style={{
+                paddingTop: 10,
+                fontSize: 13,
+                fontWeight: "600",
+              }}
+            >
+              Passenger Count
+            </Text>
+            <TextInput
+              placeholder={"No. of Available Seat"}
+              value={numberOfPassenger}
+              style={{
+                width: "100%",
+                color: "green",
+                borderRadius: 7,
+                textAlign: "center",
+                fontSize: 17,
+                borderWidth: 1,
+                borderBottomColor: "#121212",
+                borderTopWidth: 0,
+                borderLeftWidth: 0,
+                borderRightWidth: 0,
+              }}
+              onChangeText={(text) => {
+                const numericText = text.replace(/[^0-9]/g, "");
+                if (numericText.length > 0 && parseInt(numericText) !== 0) {
+                  setNumberOfPassenger(numericText);
+                } else {
+                  setNumberOfPassenger("");
+                }
+              }}
+              minimumLe
+              maxLength={1}
+              keyboardType="numeric"
+            />
+          </View>
+        )}
+
         <MapView
           showsMyLocationButton={true}
           showsUserLocation={true}
@@ -227,7 +291,7 @@ const ModalViewCard = () => {
             identifier="destination"
             pinColor="red"
           ></Marker>
-          {!isLoading && (
+          {!isLoading && numberOfPassenger !== "" && (
             <Marker
               style={{ width: 200, height: 200 }}
               coordinate={{
