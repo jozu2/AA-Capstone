@@ -7,7 +7,11 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { db } from "./../../../config";
 import { ref, remove, onValue } from "firebase/database";
-import { selectUserId, setViewBookings } from "../../redux/navSlice";
+import {
+  selectUserId,
+  setRideInfo,
+  setViewBookings,
+} from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   RefreshControl,
@@ -16,8 +20,9 @@ import {
 } from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { Alert } from "react-native";
+import { Alert, Image } from "react-native";
 import Entypo from "react-native-vector-icons/Entypo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const DriverHomePage = () => {
   const navigation = useNavigation();
   const userID = useSelector(selectUserId);
@@ -113,15 +118,17 @@ const DriverHomePage = () => {
     <View style={{ flex: 1 }}>
       <View style={[tw`shadow-lg`, styles.topBar]}>
         <EvilIcons
-          style={{ position: "absolute", bottom: 24, left: 15 }}
+          style={{ position: "absolute", bottom: 30, left: 15 }}
           name={"navicon"}
           size={40}
           color={"#242424"}
           onPress={() => navigation.openDrawer()}
         />
-        <Text style={styles.mainTitle}>Angkas Atad</Text>
-        <Text style={styles.title}>ride Along</Text>
-        <View style={{ position: "absolute", right: -10, bottom: 20 }}>
+        <Image
+          source={require("./../../assets/Icon.png")}
+          style={{ width: 60, height: 60, alignSelf: "center" }}
+        />
+        <View style={{ position: "absolute", right: -10, bottom: 30 }}>
           <TouchableOpacity onPress={handleCreateButton}>
             <Text
               style={{
@@ -131,10 +138,12 @@ const DriverHomePage = () => {
                 borderWidth: 1,
                 alignSelf: "flex-end",
                 marginRight: 30,
-                fontSize: 27,
+                fontSize: 20,
+                paddingVertical: 5,
+                paddingHorizontal: 10,
               }}
             >
-              +
+              Post
             </Text>
           </TouchableOpacity>
         </View>
@@ -343,7 +352,40 @@ const DriverHomePage = () => {
                             />
                           )}
                         </Pressable>
-                        <Pressable style={styles.Btn}>
+                        <Pressable
+                          style={styles.Btn}
+                          onPress={async () => {
+                            await AsyncStorage.setItem(
+                              "StartRideInfo",
+                              JSON.stringify(data)
+                            );
+                            await AsyncStorage.setItem(
+                              "isRideStarted",
+                              JSON.stringify(true)
+                            );
+
+                            if (data) {
+                              try {
+                                const rideData = await AsyncStorage.getItem(
+                                  "StartRideInfo"
+                                );
+
+                                const rideStarted = await AsyncStorage.getItem(
+                                  "isRideStarted"
+                                );
+
+                                dispatch(
+                                  setRideInfo({
+                                    rideData: rideData,
+                                    rideStarted: rideStarted,
+                                  })
+                                );
+                              } catch (error) {
+                                console.error("Error storing data:", error);
+                              }
+                            }
+                          }}
+                        >
                           <Text style={styles.Start}>START</Text>
                           <Text style={styles.Ride}>RIDE</Text>
                         </Pressable>

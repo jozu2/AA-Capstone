@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import DriverHomePage from "../screens/Driver/DriverHomePage";
 import DriverRideRegistration from "../screens/Driver/DriverRideRegistration";
@@ -7,17 +7,27 @@ import ViewBookings from "../screens/Driver/ViewBookings";
 import ViewUserBookingDetails from "../screens/Driver/ViewUserBookingDetails";
 import ViewUserAccepted from "../screens/Driver/ViewUserAccepted";
 import ViewAcceptedUserDetails from "../screens/Driver/ViewAcceptedUserDetails";
+import { useDispatch, useSelector } from "react-redux";
+import { selectRideInfo } from "../redux/navSlice";
+import RideStart from "../screens/Driver/RideStart";
 
 const DriverStack = () => {
   const Stack = createStackNavigator();
+  const rideInfo = useSelector(selectRideInfo);
+  const isRideStarted = rideInfo?.rideStarted;
 
+  console.log(rideInfo);
   return (
     <Stack.Navigator
       initialRouteName="DriverHomePage"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Group>
-        <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
+        {isRideStarted ? (
+          <Stack.Screen name="RideStart" component={RideStart} />
+        ) : (
+          <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
+        )}
         <Stack.Screen
           name="DriverRideRegistration"
           component={DriverRideRegistration}

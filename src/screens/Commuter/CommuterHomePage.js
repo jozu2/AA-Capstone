@@ -5,7 +5,7 @@ import { db } from "../../../config";
 import Swiper from "react-native-deck-swiper";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import tw from "twrnc";
 import Octicons from "react-native-vector-icons/Octicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -76,8 +76,10 @@ const CommuterHomePage = () => {
           color={"#242424"}
           onPress={handleOpenDrawer}
         />
-        <Text style={styles.mainTitle}>Angkas Atad</Text>
-        <Text style={styles.title}>ride Along</Text>
+        <Image
+          source={require("./../../assets/Icon.png")}
+          style={{ width: 60, height: 60, alignSelf: "center" }}
+        />
         <View style={{ position: "absolute", right: -20, bottom: 25 }}>
           <TouchableOpacity
             onPress={() => {
