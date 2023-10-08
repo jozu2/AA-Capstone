@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import ModalViewCard from "./../screens/Commuter/ModalViewCard";
 import UserNav from "./UserNav";
+import ViewRequest from "../screens/Commuter/ViewRequest";
 
 const UserStack = () => {
   const Stack = createStackNavigator();
@@ -19,6 +20,14 @@ const UserStack = () => {
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="ModalViewCard" component={ModalViewCard} />
+      </Stack.Group>
+
+      <Stack.Group
+        screenOptions={{
+          headerShown: true,
+        }}
+      >
+        <Stack.Screen name="ViewRequest" component={ViewRequest} />
       </Stack.Group>
     </Stack.Navigator>
   );

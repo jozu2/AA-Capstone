@@ -29,8 +29,8 @@ export const navSlice = createSlice({
     setViewBookings: (state, action) => {
       state.viewBookings = action.payload;
     },
-    setTravelTimeInformation: (state, action) => {
-      state.travelTimeInformation = action.payload;
+    setSavedRequest: (state, action) => {
+      state.savedRequest = action.payload;
     },
     setCardData: (state, action) => {
       state.cardData = action.payload;
@@ -74,6 +74,7 @@ export const {
   setUserLocationBooked,
   setGoingHomeTraveltime,
   setUserIsLoggedin,
+  setSavedRequest,
   setIsLoading,
   setUserId,
   setUserProfile,
@@ -92,6 +93,7 @@ export const selectTravelTimeInformation = (state) =>
   state.nav.travelTimeInformation;
 export const selectViewBookings = (state) => state.nav.viewBookings;
 export const selectedCardData = (state) => state.nav.cardData;
+export const selectSavedRequest = (state) => state.nav.savedRequest;
 
 //Selectors go to home user
 export const selectUserLocationBooked = (state) => state.nav.userLocationBooked;

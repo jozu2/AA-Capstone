@@ -12,8 +12,13 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import AntDesign from "react-native-vector-icons/AntDesign";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { setCardData } from "./../../redux/navSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectUserId,
+  setCardData,
+  setSavedRequest,
+} from "./../../redux/navSlice";
+import { TouchableOpacity } from "react-native-gesture-handler";
 const CommuterHomePage = () => {
   const [fetchedData, setFetchedData] = useState([]);
   const mapRef = useRef(null);
@@ -22,28 +27,45 @@ const CommuterHomePage = () => {
   const API_KEY = "AIzaSyCU46T5I3BvJF3_uQHta5XGih_xljGYt-I";
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCardData, setSelectedCardData] = useState(null);
+  const userID = useSelector(selectUserId);
   useEffect(() => {
     const dbRef = ref(db, "POSTED_RIDES");
 
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
-      if (!data) return;
-      if (data) {
-        const dataArray = Object.values(data);
-        setFetchedData(dataArray);
+      if (!data) {
         setIsLoading(false);
-      } else {
-        console.log("No data found in the 'POSTED_RIDES' node.");
-        setIsLoading(false);
+        return;
       }
+
+      const dataArray = Object.values(data);
+
+      const filteredDataArray = dataArray.filter((item) => {
+        if (item.Request && item.Request[userID]) {
+          return false;
+        }
+
+        return true;
+      });
+
+      const SaveUserRequest = dataArray.filter((item) => {
+        if (item.Request && item.Request[userID]) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      dispatch(setSavedRequest(SaveUserRequest));
+      setFetchedData(filteredDataArray);
+      setIsLoading(false);
     });
-  }, []);
+  }, [userID]);
 
   const swiperRef = useRef(null);
   const handleOpenDrawer = () => {
     navigation.openDrawer();
   };
-
   return (
     <View style={[tw`flex-1`, { backgroundColor: "#ebebeb" }]}>
       <View style={[tw`shadow-lg`, styles.topBar]}>
@@ -54,9 +76,29 @@ const CommuterHomePage = () => {
           color={"#242424"}
           onPress={handleOpenDrawer}
         />
-
         <Text style={styles.mainTitle}>Angkas Atad</Text>
         <Text style={styles.title}>ride Along</Text>
+        <View style={{ position: "absolute", right: -20, bottom: 25 }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("ViewRequest");
+            }}
+          >
+            <Text
+              style={{
+                borderRadius: 20,
+                textAlign: "center",
+                paddingHorizontal: 10,
+                borderWidth: 1,
+                alignSelf: "flex-end",
+                marginRight: 30,
+                fontSize: 18,
+              }}
+            >
+              View
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={[tw`shadow-md`, styles.MainCardContainerx]}>
         <View
@@ -95,20 +137,47 @@ const CommuterHomePage = () => {
             marginTop: 80,
           }}
         ></View>
+        {fetchedData.length === 0 ? (
+          <View>
+            <Text
+              style={{
+                color: "gray",
+                fontSize: 20,
+                position: "absolute",
+                bottom: 200,
+                alignSelf: "center",
+              }}
+            >
+              No ride post at the moment
+            </Text>
+          </View>
+        ) : (
+          <View></View>
+        )}
       </View>
       <View style={styles.btnContainer}>
         <Pressable
           style={styles.btn}
-          onPress={() => swiperRef.current.swipeLeft()}
+          onPress={() => {
+            if (fetchedData.length === 0) {
+              return;
+            } else {
+              swiperRef.current.swipeLeft();
+            }
+          }}
         >
           <AntDesign name={"close"} size={40} color={"#db000f"} />
         </Pressable>
+
         <Pressable
           style={styles.btn}
           onPress={() => {
-            dispatch(setCardData(selectedCardData));
-
-            navigation.navigate("ModalViewCard");
+            if (fetchedData.length === 0) {
+              return;
+            } else {
+              dispatch(setCardData(selectedCardData));
+              navigation.navigate("ModalViewCard");
+            }
           }}
         >
           <AntDesign name={"check"} size={40} color={"#04db00"} />
@@ -408,9 +477,6 @@ const CommuterHomePage = () => {
   );
 };
 
-{
-  /* <View>{console.log(card.coordinates.destination.location)}</View> */
-}
 export default CommuterHomePage;
 const styles = StyleSheet.create({
   topBar: {

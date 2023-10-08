@@ -43,6 +43,9 @@ const ViewAcceptedUserDetails = () => {
           <Text>
             DISTANCE: {`${userLocation.rideInfo.distance} Kilometers`}
           </Text>
+          <Text>
+            passenger: {`${userLocation.rideInfo.passengerCount} person`}
+          </Text>
         </View>
         <View>
           <MapView

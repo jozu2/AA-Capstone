@@ -80,7 +80,7 @@ const ViewUserBookingDetails = () => {
                 );
                 set(addOccupiedSeat, sumOfPassengerSeatOccupied);
 
-                navigation.replace("ViewBooking");
+                navigation.replace("DriverHomePage");
               } else {
                 alert("error: beyond Maximum Passenger Reached");
                 navigation.replace("ViewBooking");

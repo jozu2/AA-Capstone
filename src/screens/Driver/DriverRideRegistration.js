@@ -73,7 +73,6 @@ const DriverRideRegistration = () => {
   };
   const minimumTime = new Date();
   minimumTime.setHours(0, 0, 0, 0);
-  ////////////////////////LOG/////////////////////////
   const origin = useSelector(selectOrigin);
   const originDesc = useSelector(selectOriginDescription);
   const destination = useSelector(selectDestination);
@@ -148,14 +147,9 @@ const DriverRideRegistration = () => {
   };
   return (
     <View>
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled" // Add this prop
-      >
+      <View>
         <View
-          style={tw`flex flex-row pt-13  items-center pb-5 bg-white shadow-md
-
-`}
+          style={tw`flex flex-row pt-13  items-center pb-5 bg-white shadow-md`}
         >
           <Ionicons
             name={"arrow-back"}
@@ -180,6 +174,7 @@ const DriverRideRegistration = () => {
                   borderRadius: 15,
                   paddingHorizontal: 18,
                   marginTop: "1%",
+                  height: "89%",
                   borderBottomColor: "#262626",
                   borderWidth: 1,
                   borderTopWidth: 0,
@@ -188,66 +183,116 @@ const DriverRideRegistration = () => {
                 },
               ]}
             >
-              <View style={[tw`pt-3 pb-3`, { alignSelf: "flex-end" }]}>
-                <Pressable
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    backgroundColor: "red",
-                    width: "40%",
-                    borderRadius: 5,
-                    paddingVertical: 3,
-                    paddingHorizontal: 10,
-                  }}
-                  onPress={handleShareBtn}
-                >
-                  <Text
-                    style={{
-                      fontSize: 17,
-                      fontWeight: "600",
-                      color: "#f5f5f5",
+              <Text style={styles.TextInputFieldt}>Course Destination</Text>
+              <Pressable
+                onPress={handleSetRouteBtn}
+                style={styles.buttonSetCourse}
+              >
+                {origin ? (
+                  <Text style={styles.btntxt}>Edit Route </Text>
+                ) : (
+                  <Text style={styles.btntxt}>Set Route </Text>
+                )}
+              </Pressable>
+              <MapView
+                showsMyLocationButton={true}
+                showsUserLocation={true}
+                ref={mapRef}
+                style={[
+                  tw`flex-1 mt-2`,
+                  {
+                    paddingVertical: 125,
+                  },
+                ]}
+                region={{
+                  latitude: 15.0794,
+                  longitude: 120.62,
+                  latitudeDelta: 0.45,
+                  longitudeDelta: 0.45,
+                }}
+              >
+                {origin && (
+                  <Marker
+                    style={{ width: 200, height: 200 }}
+                    coordinate={{
+                      latitude: origin.latitude,
+                      longitude: origin.longitude,
                     }}
-                  >
-                    Share Ride
-                  </Text>
+                    title="Origin"
+                    description={originDesc}
+                    identifier="origin"
+                  ></Marker>
+                )}
+                {destination && (
+                  <Marker
+                    style={{ width: 200, height: 200 }}
+                    coordinate={{
+                      latitude: destination.latitude,
+                      longitude: destination.longitude,
+                    }}
+                    title="Destination"
+                    description={destinationDesc}
+                    identifier="destination"
+                    pinColor="green"
+                  ></Marker>
+                )}
 
-                  <Ionicons
-                    name={"arrow-redo"}
-                    color={"#f5f5f5"}
-                    size={30}
-                    style={tw`ml-2`}
-                  />
-                </Pressable>
-              </View>
-              <View>
-                <Text style={styles.TextInputFieldx}>Schedule Date: </Text>
-                {showPicker && (
-                  <DateTimePicker
-                    mode="date"
-                    value={date}
-                    onChange={onChange}
-                    minimumDate={new Date()}
-                    maximumDate={new Date("2025-1-1")}
+                {origin && destination && (
+                  <MapViewDirections
+                    origin={{
+                      latitude: origin.latitude,
+                      longitude: origin.longitude,
+                    }}
+                    destination={{
+                      latitude: destination.latitude,
+                      longitude: destination.longitude,
+                    }}
+                    identifier="destination"
+                    apikey={API_KEY}
+                    strokeWidth={4}
+                    strokeColor="red"
+                    optimizeWaypoints={true}
+                    onReady={(result) => {
+                      mapRef.current.fitToCoordinates(result.coordinates, {
+                        edgePadding: {
+                          top: 50,
+                          right: 50,
+                          bottom: 50,
+                          left: 50,
+                        },
+                      });
+                    }}
                   />
                 )}
-                <View style={tw`flex flex-row items-center`}>
-                  <TextInput
-                    style={styles.txtbox}
-                    value={when}
-                    onChangeText={setWhen}
-                    placeholder="Departure Date"
-                    editable={false}
-                  />
-                  <MaterialCommunityIcons
-                    onPress={toggleDatePicker}
-                    name={"calendar-month"}
-                    size={25}
-                    color={"#121212"}
-                    style={styles.icon}
-                  />
-                </View>
+              </MapView>
+
+              <Text style={styles.TextInputFieldx}>Schedule Date: </Text>
+              {showPicker && (
+                <DateTimePicker
+                  mode="date"
+                  value={date}
+                  onChange={onChange}
+                  minimumDate={new Date()}
+                  maximumDate={new Date("2025-1-1")}
+                />
+              )}
+              <View style={tw`flex flex-row items-center`}>
+                <TextInput
+                  style={styles.txtbox}
+                  value={when}
+                  onChangeText={setWhen}
+                  placeholder="Departure Date"
+                  editable={false}
+                />
+                <MaterialCommunityIcons
+                  onPress={toggleDatePicker}
+                  name={"calendar-month"}
+                  size={25}
+                  color={"#121212"}
+                  style={styles.icon}
+                />
               </View>
+
               <View>
                 <Text style={styles.TextInputField}>Departure Time</Text>
                 {showTimePicker && (
@@ -302,96 +347,47 @@ const DriverRideRegistration = () => {
                 />
               </View>
               <View style={tw`mb-10`}>
-                <Text style={styles.TextInputFieldt}>Course Destination</Text>
-                <Pressable
-                  onPress={handleSetRouteBtn}
-                  style={styles.buttonSetCourse}
-                >
-                  {origin ? (
-                    <Text style={styles.btntxt}>Edit Route </Text>
-                  ) : (
-                    <Text style={styles.btntxt}>Set Route </Text>
-                  )}
-                </Pressable>
-
                 <View>
-                  <MapView
-                    showsMyLocationButton={true}
-                    showsUserLocation={true}
-                    ref={mapRef}
-                    style={[
-                      tw`flex-1 mt-2`,
-                      {
-                        paddingVertical: "38%",
-                      },
-                    ]}
-                    region={{
-                      latitude: 15.0794,
-                      longitude: 120.62,
-                      latitudeDelta: 0.45,
-                      longitudeDelta: 0.45,
-                    }}
-                  >
-                    {origin && (
-                      <Marker
-                        style={{ width: 200, height: 200 }}
-                        coordinate={{
-                          latitude: origin.latitude,
-                          longitude: origin.longitude,
+                  <View>
+                    <View style={[tw`pt-5`, { alignSelf: "flex-end" }]}>
+                      <Pressable
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          backgroundColor: "red",
+                          width: "40%",
+                          borderRadius: 5,
+                          paddingVertical: 3,
+                          paddingHorizontal: 10,
                         }}
-                        title="Origin"
-                        description={originDesc}
-                        identifier="origin"
-                      ></Marker>
-                    )}
-                    {destination && (
-                      <Marker
-                        style={{ width: 200, height: 200 }}
-                        coordinate={{
-                          latitude: destination.latitude,
-                          longitude: destination.longitude,
-                        }}
-                        title="Destination"
-                        description={destinationDesc}
-                        identifier="destination"
-                        pinColor="green"
-                      ></Marker>
-                    )}
+                        onPress={handleShareBtn}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 17,
+                            fontWeight: "600",
+                            color: "#f5f5f5",
+                          }}
+                        >
+                          Share Ride
+                        </Text>
 
-                    {origin && destination && (
-                      <MapViewDirections
-                        origin={{
-                          latitude: origin.latitude,
-                          longitude: origin.longitude,
-                        }}
-                        destination={{
-                          latitude: destination.latitude,
-                          longitude: destination.longitude,
-                        }}
-                        identifier="destination"
-                        apikey={API_KEY}
-                        strokeWidth={4}
-                        strokeColor="red"
-                        optimizeWaypoints={true}
-                        onReady={(result) => {
-                          mapRef.current.fitToCoordinates(result.coordinates, {
-                            edgePadding: {
-                              top: 50,
-                              right: 50,
-                              bottom: 50,
-                              left: 50,
-                            },
-                          });
-                        }}
-                      />
-                    )}
-                  </MapView>
+                        <Ionicons
+                          name={"arrow-redo"}
+                          color={"#f5f5f5"}
+                          size={30}
+                          style={tw`ml-2`}
+                        />
+                      </Pressable>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -420,12 +416,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   TextInputFieldx: {
-    paddingTop: 10,
+    marginTop: 15,
     fontSize: 15,
     fontWeight: "600",
   },
   TextInputFieldt: {
-    paddingTop: 15,
+    paddingTop: 20,
     fontSize: 15,
     fontWeight: "600",
   },
@@ -450,13 +446,13 @@ const styles = StyleSheet.create({
   buttonSetCourse: {
     backgroundColor: "red",
     width: "40%",
-    paddingVertical: 7,
+    paddingVertical: 5,
     borderRadius: 30,
     position: "absolute",
-    bottom: "5%",
     zIndex: 1000,
     alignSelf: "center",
     textAlign: "center",
+    top: 250,
   },
   btntxt: {
     alignSelf: "center",

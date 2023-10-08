@@ -9,7 +9,11 @@ import { db } from "./../../../config";
 import { ref, remove, onValue } from "firebase/database";
 import { selectUserId, setViewBookings } from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import {
+  RefreshControl,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { Alert } from "react-native";
@@ -21,36 +25,59 @@ const DriverHomePage = () => {
   const mapRef = useRef(null);
   const API_KEY = "AIzaSyCU46T5I3BvJF3_uQHta5XGih_xljGYt-I";
   const dispatch = useDispatch();
-  useEffect(() => {
-    const dbRef = ref(db, "POSTED_RIDES");
+  const [refreshing, setRefreshing] = useState(false);
 
-    const unsubscribe = onValue(dbRef, (snapshot) => {
-      const requestData = snapshot.val();
+  const fetchData = async () => {
+    try {
+      // Your data fetching logic here
+      const dbRef = ref(db, "POSTED_RIDES");
 
-      if (!requestData || Object.keys(requestData).length === 0) {
-        return;
-      }
+      onValue(dbRef, (snapshot) => {
+        const requestData = snapshot.val();
 
-      const requests = Object.keys(requestData).map((key) => ({
-        id: key,
-        ...requestData[key],
-      }));
+        if (!requestData) {
+          return;
+        }
 
-      const filteredRequests = requests.filter((request) => {
-        return request.driverProfile.UID === userID;
+        const requests = Object.keys(requestData).map((key) => ({
+          id: key,
+          ...requestData[key],
+        }));
+
+        const filteredRequests = requests.filter((request) => {
+          return request.driverProfile.UID === userID;
+        });
+
+        if (filteredRequests.length > 0) {
+          setFetchedData(filteredRequests);
+        } else {
+          console.log("No matching data found.");
+        }
+
+        setRefreshing(false);
       });
+    } catch (error) {
+      console.error("Error:", error);
+      setRefreshing(false);
+    }
+  };
 
-      if (!filteredRequests) return;
-      if (filteredRequests.length > 0) {
-        setFetchedData(filteredRequests);
-      } else {
-        console.log("No matching data found.");
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [userID]);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
+
+  const handleScroll = (event) => {
+    // Detect if the user has scrolled up beyond a certain threshold (e.g., 100)
+    if (event.nativeEvent.contentOffset.y < -100) {
+      // Trigger the refresh action
+      handleRefresh();
+    }
+  };
 
   const handleCloseBtn = (id) => {
     Alert.alert(
@@ -83,7 +110,7 @@ const DriverHomePage = () => {
     navigation.navigate("DriverRideRegistration");
   };
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <View style={[tw`shadow-lg`, styles.topBar]}>
         <EvilIcons
           style={{ position: "absolute", bottom: 24, left: 15 }}
@@ -94,8 +121,33 @@ const DriverHomePage = () => {
         />
         <Text style={styles.mainTitle}>Angkas Atad</Text>
         <Text style={styles.title}>ride Along</Text>
+        <View style={{ position: "absolute", right: -10, bottom: 20 }}>
+          <TouchableOpacity onPress={handleCreateButton}>
+            <Text
+              style={{
+                borderRadius: 20,
+                textAlign: "center",
+                paddingHorizontal: 10,
+                borderWidth: 1,
+                alignSelf: "flex-end",
+                marginRight: 30,
+                fontSize: 27,
+              }}
+            >
+              +
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <ScrollView style={[tw`mt-20`, styles.cardContainer]}>
+
+      <ScrollView
+        style={[tw`mt-18`, styles.cardContainer]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         <View>
           {fetchedData && (
             <View>
@@ -303,22 +355,25 @@ const DriverHomePage = () => {
             </View>
           )}
         </View>
-        <View>
-          <Pressable onPress={handleCreateButton} style={styles.addContainer}>
-            <View style={styles.wl}></View>
-            <View style={styles.wl2}></View>
-            <View style={styles.wl3}></View>
-            <View style={styles.wl4}></View>
-            <AntDesign
-              name="plus"
-              color={"gray"}
-              size={80}
-              style={styles.Icon}
-            />
+        <View style={{ height: 100 }}></View>
+        {!fetchedData && (
+          <View>
+            <Pressable onPress={handleCreateButton} style={styles.addContainer}>
+              <View style={styles.wl}></View>
+              <View style={styles.wl2}></View>
+              <View style={styles.wl3}></View>
+              <View style={styles.wl4}></View>
+              <AntDesign
+                name="plus"
+                color={"gray"}
+                size={80}
+                style={styles.Icon}
+              />
 
-            <Text>CREATE A RIDE</Text>
-          </Pressable>
-        </View>
+              <Text>CREATE A RIDE</Text>
+            </Pressable>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
