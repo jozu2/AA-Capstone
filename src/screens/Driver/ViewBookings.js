@@ -73,10 +73,7 @@ const ViewBookings = () => {
               <View>
                 <TouchableOpacity
                   style={[tw`shadow-md`, styles.container]}
-                  onPress={() => {
-                    navigation.navigate("BookingDetails");
-                    dispatch(setUserLocationBooked(booking));
-                  }}
+                  
                 >
                   <View style={styles.nameAndProfileContainer}>
                     <TouchableOpacity
@@ -112,6 +109,16 @@ const ViewBookings = () => {
                         1h ago
                       </Text>
                     </View>
+                         <TouchableOpacity
+            style={styles.btn}
+            onPress={() => {
+              navigation.navigate("BookingDetails");
+              dispatch(setUserLocationBooked(booking));
+            }}
+          >
+            <Text style={{color:"white", fontSize:14, fontWeight:600,}}>View</Text>
+          </TouchableOpacity>
+
                   </View>
                 </TouchableOpacity>
               </View>
@@ -144,4 +151,26 @@ const styles = StyleSheet.create({
     borderColor: "red",
     borderRadius: 1000,
   },
+ 
+    btn: {
+      width: 70,
+      height: 50,
+      backgroundColor: "limegreen",
+      borderRadius: 6,
+      borderWidth: .5,
+      borderColor: "green",
+      justifyContent: "center",
+      alignItems: "center",
+      marginHorizontal: 20,
+      marginVertical: 10,
+      marginLeft:45,
+      shadowColor: "black",
+      shadowOffset: {
+          width: 0,
+          height: 3,
+                    },
+      shadowOpacity: 9,
+      shadowRadius: 4,
+      elevation: 3
+    },
 });

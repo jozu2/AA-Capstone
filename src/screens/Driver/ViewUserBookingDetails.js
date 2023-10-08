@@ -39,57 +39,7 @@ const ViewUserBookingDetails = () => {
           },
         ]}
       >
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignSelf: "center",
-          }}
-        >
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <Text>DECLINE</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => {
-              const availSeat =
-                bookingData.DriverData.Schedule.seatAvailable -
-                bookingData.DriverData.Schedule.occupiedSeat;
-
-              if (availSeat >= userLocation.rideInfo.passengerCount) {
-                const studentIsAcceptedRef = ref(
-                  db,
-                  `POSTED_RIDES/${DriverPostID}/Request/${userLocation.userInfo.userID}/status/isAccepted`
-                );
-                set(studentIsAcceptedRef, true);
-
-                const sumOfPassengerSeatOccupied =
-                  parseInt(bookingData.DriverData.Schedule.occupiedSeat) +
-                  parseInt(userLocation.rideInfo.passengerCount);
-
-                const addOccupiedSeat = ref(
-                  db,
-                  `POSTED_RIDES/${DriverPostID}/Schedule/occupiedSeat`
-                );
-                set(addOccupiedSeat, sumOfPassengerSeatOccupied);
-
-                navigation.replace("DriverHomePage");
-              } else {
-                alert("error: beyond Maximum Passenger Reached");
-                navigation.replace("ViewBooking");
-              }
-            }}
-          >
-            <Text>ACCEPT</Text>
-          </TouchableOpacity>
-        </View>
+       
         <View>
           <MapView
             showsMyLocationButton={true}
@@ -184,14 +134,71 @@ const ViewUserBookingDetails = () => {
             />
           </MapView>
         </View>
-        <View style={{ alignSelf: "center", marginTop: 10 }}>
-          <Text>PICK UP: {userLocation.rideInfo.description}</Text>
-          <Text>
-            DISTANCE: {`${userLocation.rideInfo.distance} Kilometers`}
+        <View style={{ alignSelf: "center", marginTop: 20 }}>
+          <Text style={styles.txtinfo}>
+            PICK UP: 
+            <Text style={{color:"black"}}> {userLocation.rideInfo.description}</Text>
+            </Text>
+          <Text style={styles.txtinfo} >
+            DISTANCE:
+             <Text style={{color:"black"}}> {`${userLocation.rideInfo.distance} Kilometers`}</Text>
           </Text>
-          <Text>
-            No. of PASSENGER: {`${userLocation.rideInfo.passengerCount} `}
+          <Text style={styles.txtinfo} >
+            No. of PASSENGER:
+            <Text style={{color:"black"}}> {`${userLocation.rideInfo.passengerCount} `}</Text>
           </Text>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignSelf: "center",
+            marginTop:30,
+          }}
+        >
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text style={{color:"red", fontSize:14, fontWeight:600,}}>DECLINE</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.btn}
+            onPress={() => {
+              const availSeat =
+                bookingData.DriverData.Schedule.seatAvailable -
+                bookingData.DriverData.Schedule.occupiedSeat;
+
+              if (availSeat >= userLocation.rideInfo.passengerCount) {
+                const studentIsAcceptedRef = ref(
+                  db,
+                  `POSTED_RIDES/${DriverPostID}/Request/${userLocation.userInfo.userID}/status/isAccepted`
+                );
+                set(studentIsAcceptedRef, true);
+
+                const sumOfPassengerSeatOccupied =
+                  parseInt(bookingData.DriverData.Schedule.occupiedSeat) +
+                  parseInt(userLocation.rideInfo.passengerCount);
+
+                const addOccupiedSeat = ref(
+                  db,
+                  `POSTED_RIDES/${DriverPostID}/Schedule/occupiedSeat`
+                );
+                set(addOccupiedSeat, sumOfPassengerSeatOccupied);
+
+                navigation.replace("DriverHomePage");
+              } else {
+                alert("error: beyond Maximum Passenger Reached");
+                navigation.replace("ViewBooking");
+              }
+            }}
+          >
+            <Text style={{color:"green", fontSize:14, fontWeight:600,}}>ACCEPT</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -205,15 +212,29 @@ const styles = StyleSheet.create({
     width: 170,
     height: 65,
     backgroundColor: "#fff",
-    borderRadius: 3,
+    borderRadius: 6,
     borderWidth: 1,
+    borderColor: "gray",
     justifyContent: "center",
-    borderBottomColor: "#2e2e2e",
-    borderLeftColor: "#2e2e2e",
     alignItems: "center",
-    borderTopWidth: 0,
-    borderRightColor: "#b3b3b3",
     marginHorizontal: 10,
-    marginBottom: 10,
+    marginBottom: 15,
+    shadowColor: "gray",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+                  },
+    shadowOpacity: 0.11,
+    shadowRadius: 3.84,
+    elevation: 3
+  },
+
+  
+
+  txtinfo: {
+    fontSize:13,
+    fontWeight:'bold',
+    marginTop:10,
+    color:"green"
   },
 });
