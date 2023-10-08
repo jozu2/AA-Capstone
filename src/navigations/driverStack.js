@@ -10,6 +10,7 @@ import ViewAcceptedUserDetails from "../screens/Driver/ViewAcceptedUserDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRideInfo } from "../redux/navSlice";
 import RideStart from "../screens/Driver/RideStart";
+import RideSuccess from "../screens/Driver/RideSuccess";
 
 const DriverStack = () => {
   const Stack = createStackNavigator();
@@ -17,20 +18,18 @@ const DriverStack = () => {
   const isRideStarted = rideInfo?.rideStarted;
 
   return (
-    <Stack.Navigator
-      initialRouteName="DriverHomePage"
-      screenOptions={{ headerShown: false }}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Group>
-        {isRideStarted ? (
-          <Stack.Screen name="RideStart" component={RideStart} />
-        ) : (
+        {!isRideStarted ? (
           <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
+        ) : (
+          <Stack.Screen name="RideStart" component={RideStart} />
         )}
         <Stack.Screen
           name="DriverRideRegistration"
           component={DriverRideRegistration}
         />
+        <Stack.Screen name="RideSuccess" component={RideSuccess} />
         <Stack.Screen name="SetRouteModal" component={SetRouteModal} />
       </Stack.Group>
       <Stack.Group screenOptions={{ headerShown: true }}>

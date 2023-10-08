@@ -354,39 +354,58 @@ const DriverHomePage = () => {
                         </Pressable>
                         <Pressable
                           style={styles.Btn}
-                          onPress={async () => {
-                            await AsyncStorage.setItem(
-                              "StartRideInfo",
-                              JSON.stringify(data)
+                          onPress={() => {
+                            Alert.alert(
+                              "Confirm Deletion",
+                              "Are you sure you want to start this ride?",
+                              [
+                                {
+                                  text: "No",
+                                  style: "cancel",
+                                },
+                                {
+                                  text: "Yes",
+                                  onPress: async () => {
+                                    try {
+                                      await AsyncStorage.setItem(
+                                        "StartRideInfo",
+                                        JSON.stringify(data)
+                                      );
+                                      await AsyncStorage.setItem(
+                                        "isRideStarted",
+                                        JSON.stringify(true)
+                                      );
+
+                                      const rideData =
+                                        await AsyncStorage.getItem(
+                                          "StartRideInfo"
+                                        );
+                                      const parseRideData =
+                                        JSON.parse(rideData);
+
+                                      const rideStarted =
+                                        await AsyncStorage.getItem(
+                                          "isRideStarted"
+                                        );
+                                      const parsedIsStarted =
+                                        JSON.parse(rideStarted);
+
+                                      dispatch(
+                                        setRideInfo({
+                                          rideData: parseRideData,
+                                          rideStarted: parsedIsStarted,
+                                        })
+                                      );
+                                    } catch (error) {
+                                      console.error(
+                                        "Error storing data:",
+                                        error
+                                      );
+                                    }
+                                  },
+                                },
+                              ]
                             );
-                            await AsyncStorage.setItem(
-                              "isRideStarted",
-                              JSON.stringify(true)
-                            );
-
-                            if (data) {
-                              try {
-                                const rideData = await AsyncStorage.getItem(
-                                  "StartRideInfo"
-                                );
-                                const parseRideData = JSON.parse(rideData);
-
-                                const rideStarted = await AsyncStorage.getItem(
-                                  "isRideStarted"
-                                );
-
-                                const parsedIsStarted = JSON.parse(rideStarted);
-
-                                dispatch(
-                                  setRideInfo({
-                                    rideData: parseRideData,
-                                    rideStarted: parsedIsStarted,
-                                  })
-                                );
-                              } catch (error) {
-                                console.error("Error storing data:", error);
-                              }
-                            }
                           }}
                         >
                           <Text style={styles.Start}>START</Text>

@@ -55,16 +55,15 @@ const MainNavigation = () => {
       }
       if (driver) {
         setIsLoading(true);
-
         const rideStart = JSON.parse(isRideStarted);
         const rideData = JSON.parse(rideInfoData);
+        console.log("mainNav", rideStart);
         dispatch(
           setRideInfo({
             rideData: rideData,
             rideStarted: rideStart,
           })
         );
-
         const driverFirestoreData = JSON.parse(driverFirestore);
         dispatch(setUserProfile(driverFirestoreData));
         const driverData = JSON.parse(driver);

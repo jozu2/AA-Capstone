@@ -19,19 +19,7 @@ const RideStart = () => {
   const cardData = useSelector(selectRideInfo);
   const [acceptedRide, setAcceptedRide] = useState(null);
   const handleEndRideBtn = async () => {
-    try {
-      await AsyncStorage.removeItem("isRideStarted");
-      await AsyncStorage.removeItem("StartRideInfo");
-      dispatch(
-        setRideInfo({
-          rideData: null,
-          rideStarted: false,
-        })
-      );
-      navigation.navigate("DriverHomePage");
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
+    navigation.navigate("RideSuccess");
   };
 
   const [userLocation, setUserLocation] = useState({});
