@@ -14,7 +14,6 @@ const ViewRequest = () => {
   const mapRef = useRef(null);
   const API_KEY = "AIzaSyCU46T5I3BvJF3_uQHta5XGih_xljGYt-I";
   const [selectedCardData, setSelectedCardData] = useState(null);
-
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#fff", padding: 10 }}>
       {dataRequests.map((card, index) => {
@@ -134,15 +133,6 @@ const ViewRequest = () => {
                       onReady={(result) => {
                         setSelectedCardData(card);
 
-                        const distance = result.distance || 0; // Distance is in meters
-                        // Now you can use the `distance` variable to display the distance as needed.
-                        // console.log(`Total Distance: ${distance} meters`);
-
-                        // You can also convert the distance to other units, such as kilometers or miles, if needed.
-                        const distanceInKilometers = distance / 1000; // Correct conversion to kilometers
-                        // console.log(
-                        //   `Total Distance: ${distanceInKilometers} kilometers`
-                        // );
                         mapRef.current.fitToCoordinates(result.coordinates, {
                           edgePadding: {
                             top: 30,

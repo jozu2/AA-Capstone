@@ -369,15 +369,18 @@ const DriverHomePage = () => {
                                 const rideData = await AsyncStorage.getItem(
                                   "StartRideInfo"
                                 );
+                                const parseRideData = JSON.parse(rideData);
 
                                 const rideStarted = await AsyncStorage.getItem(
                                   "isRideStarted"
                                 );
 
+                                const parsedIsStarted = JSON.parse(rideStarted);
+
                                 dispatch(
                                   setRideInfo({
-                                    rideData: rideData,
-                                    rideStarted: rideStarted,
+                                    rideData: parseRideData,
+                                    rideStarted: parsedIsStarted,
                                   })
                                 );
                               } catch (error) {

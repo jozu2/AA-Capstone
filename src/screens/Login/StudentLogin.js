@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import * as Animatable from "react-native-animatable";
 import Entypo from "react-native-vector-icons/Entypo";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Alert } from "react-native";
 
 const StudentLogin = () => {
   const [password, setPassword] = useState("");
@@ -70,7 +71,20 @@ const StudentLogin = () => {
       return; // Add this return statement to prevent further execution
     }
   };
+  const handleResetPassword = async () => {
+    try {
+      if (!email) return;
 
+      await firebase.auth().sendPasswordResetEmail(email);
+      Alert.alert(
+        "Password Reset Email Sent",
+        "Check your email to reset your password."
+      );
+    } catch (error) {
+      console.error("Password Reset Failed", error); // Log the error for debugging
+      Alert.alert("Password Reset Failed", error.message);
+    }
+  };
   return (
     <View style={styles.container}>
       <Animatable.View
@@ -122,7 +136,9 @@ const StudentLogin = () => {
               style={styles.eyeIcon}
             />
           </View>
-          <Text style={styles.forgot}>Forgot Password?</Text>
+          <TouchableOpacity onPress={handleResetPassword}>
+            <Text style={styles.forgot}>Forgot Password?</Text>
+          </TouchableOpacity>
           <Animatable.View
             animation={"fadeInUp"}
             duration={2000}

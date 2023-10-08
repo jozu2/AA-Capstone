@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { firebase } from "./../../../config";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
+import Entypo from "react-native-vector-icons/Entypo";
 
 const DriverRegistration = () => {
   const [email, setEmail] = useState("");
@@ -11,8 +12,10 @@ const DriverRegistration = () => {
   const [lastName, setLastName] = useState("");
   const [driverId, setDriverId] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
 
   const [showErrorPass, setShowErrorPass] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -22,7 +25,8 @@ const DriverRegistration = () => {
     firstName,
     lastName,
     driverId,
-    confirmPass
+    confirmPass,
+    mobileNumber
   ) => {
     if (password !== confirmPass) {
       setShowErrorPass(true);
@@ -54,9 +58,10 @@ const DriverRegistration = () => {
                 lastName,
                 email,
                 driverId,
+                mobileNumber,
               });
 
-            navigation.navigate("LoginHome");
+            navigation.navigate("HomeLogin");
           })
           .catch((err) => {
             alert(err.message);
@@ -86,6 +91,7 @@ const DriverRegistration = () => {
 
           <TextInput
             style={styles.input}
+            placeholder="john"
             defaultValue={firstName}
             onChangeText={(fname) => setFirstName(fname)}
             autoCorrect={false}
@@ -99,17 +105,20 @@ const DriverRegistration = () => {
             defaultValue={lastName}
             onChangeText={(lname) => setLastName(lname)}
             autoCorrect={false}
+            placeholder="doe"
             placeholderTextColor="grey"
             returnKeyType="next"
           />
-          <Text style={styles.textTitle}>Teacher ID</Text>
+          <Text style={styles.textTitle}>DHVSU ID Number</Text>
 
           <TextInput
             style={styles.input}
+            placeholder="ID number"
             defaultValue={driverId}
             onChangeText={(driverId) => setDriverId(driverId)}
             autoCorrect={false}
             placeholderTextColor="grey"
+            keyboardType="numeric"
             returnKeyType="next"
           />
           <Text style={styles.textTitle}>Email</Text>
@@ -118,9 +127,23 @@ const DriverRegistration = () => {
             defaultValue={email}
             onChangeText={(email) => setEmail(email)}
             textContentType="emailAddress"
+            placeholder="johndoe@gmail.com"
             autoCapitalize="none"
             placeholderTextColor="grey"
             keyboardType="email-address"
+            returnKeyType="next"
+          />
+          <Text style={styles.textTitle}>Mobile No.</Text>
+          <TextInput
+            style={styles.input}
+            defaultValue={mobileNumber}
+            onChangeText={(num) => setMobileNumber(num)}
+            textContentType="emailAddress"
+            placeholder="09******023"
+            autoCapitalize="none"
+            maxLength={11}
+            placeholderTextColor="grey"
+            keyboardType="number-pad"
             returnKeyType="next"
           />
           <Text style={styles.textTitle}>
@@ -129,25 +152,35 @@ const DriverRegistration = () => {
               <Text style={styles.textError}> * Password doesn't match</Text>
             )}
           </Text>
-
-          <TextInput
-            style={styles.input}
-            defaultValue={password}
-            onChangeText={(pass) => setPassword(pass)}
-            placeholderTextColor="grey"
-            returnKeyType="next"
-            secureTextEntry={true}
-            textContentType="password"
-            keyboardType="default"
-          />
+          <View style={styles.passAndEye}>
+            <TextInput
+              style={styles.input}
+              placeholder="set password"
+              defaultValue={password}
+              onChangeText={(pass) => setPassword(pass)}
+              placeholderTextColor="gray"
+              secureTextEntry={!passwordVisible}
+              textContentType="password"
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+            <Entypo
+              name={passwordVisible ? "eye" : "eye-with-line"}
+              color="gray"
+              size={23}
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              style={styles.eyeIcon}
+            />
+          </View>
           <Text style={styles.textTitle}>Confirm Password</Text>
           <TextInput
             style={styles.input}
             defaultValue={confirmPass}
+            placeholder="re-type password"
             onChangeText={(pass) => setConfirmPass(pass)}
             placeholderTextColor="grey"
             returnKeyType="next"
-            secureTextEntry={true}
+            secureTextEntry={!passwordVisible}
             textContentType="password"
             keyboardType="default"
           />
@@ -167,7 +200,8 @@ const DriverRegistration = () => {
                   firstName,
                   lastName,
                   driverId,
-                  confirmPass
+                  confirmPass,
+                  mobileNumber
                 )
               }
             >
@@ -205,6 +239,14 @@ const DriverRegistration = () => {
 export default DriverRegistration;
 
 const styles = StyleSheet.create({
+  passAndEye: {
+    width: "100%",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: "10%",
+    bottom: "15%",
+  },
   textError: {
     color: "red",
   },
