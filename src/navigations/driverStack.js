@@ -16,7 +16,6 @@ const DriverStack = () => {
   const rideInfo = useSelector(selectRideInfo);
   const isRideStarted = rideInfo?.rideStarted;
 
-  console.log(rideInfo);
   return (
     <Stack.Navigator
       initialRouteName="DriverHomePage"

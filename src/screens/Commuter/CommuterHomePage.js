@@ -261,7 +261,7 @@ const CommuterHomePage = () => {
                       >
                         <Text
                           style={styles.profileNameText}
-                        >{`${card.driverProfile.firstName} ${card.driverProfile.lastName} `}</Text>
+                        >{`${card?.driverProfile.firstName} ${card?.driverProfile.lastName} `}</Text>
                         <Text style={styles.email}>Posted: 3h ago</Text>
                       </View>
                       <Text
@@ -299,7 +299,7 @@ const CommuterHomePage = () => {
                             >{`Origin`}</Text>
                             <Text
                               style={styles.textPlace}
-                            >{`${card.coordinates.origin.location}`}</Text>
+                            >{`${card?.coordinates.origin.location}`}</Text>
                           </View>
                         </View>
                       </View>
@@ -326,7 +326,7 @@ const CommuterHomePage = () => {
                             >{`Destination`}</Text>
                             <Text
                               style={styles.textPlace}
-                            >{`${card.coordinates.destination.location}`}</Text>
+                            >{`${card?.coordinates.destination.location}`}</Text>
                           </View>
                         </View>
                       </View>
@@ -354,11 +354,11 @@ const CommuterHomePage = () => {
                         <Marker
                           style={{ width: 200, height: 200 }}
                           coordinate={{
-                            latitude: card.coordinates.origin.latitude,
-                            longitude: card.coordinates.origin.longitude,
+                            latitude: card?.coordinates.origin.latitude,
+                            longitude: card?.coordinates.origin.longitude,
                           }}
                           title="Origin"
-                          description={card.coordinates.origin.location}
+                          description={card?.coordinates.origin.location}
                           identifier="origin"
                           pinColor="green"
                         ></Marker>
@@ -393,15 +393,6 @@ const CommuterHomePage = () => {
                           onReady={(result) => {
                             setSelectedCardData(card);
 
-                            const distance = result.distance || 0; // Distance is in meters
-                            // Now you can use the `distance` variable to display the distance as needed.
-                            // console.log(`Total Distance: ${distance} meters`);
-
-                            // You can also convert the distance to other units, such as kilometers or miles, if needed.
-                            const distanceInKilometers = distance / 1000; // Correct conversion to kilometers
-                            // console.log(
-                            //   `Total Distance: ${distanceInKilometers} kilometers`
-                            // );
                             mapRef.current.fitToCoordinates(
                               result.coordinates,
                               {
@@ -440,7 +431,7 @@ const CommuterHomePage = () => {
                               paddingLeft: 5,
                             }}
                           >
-                            {card.Schedule.When}
+                            {card?.Schedule.When}
                           </Text>
                         </View>
                         <View style={styles.flexRow}>
@@ -452,7 +443,7 @@ const CommuterHomePage = () => {
                               lineHeight: 15,
                             }}
                           >
-                            {`${card.Schedule.timeOfDeparture}`}
+                            {`${card?.Schedule.timeOfDeparture}`}
                           </Text>
                         </View>
                       </View>
@@ -465,7 +456,7 @@ const CommuterHomePage = () => {
                             paddingTop: 6,
                             color: "#636363",
                           }}
-                        >{`${card.Schedule.occupiedSeat} / ${card.Schedule.seatAvailable}`}</Text>
+                        >{`${card?.Schedule.occupiedSeat} / ${card?.Schedule.seatAvailable}`}</Text>
                       </View>
                     </View>
                   </View>

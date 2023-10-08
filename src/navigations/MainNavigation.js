@@ -6,6 +6,7 @@ import Login from "./Login";
 
 import {
   selectUserIsLoggedIn,
+  setRideInfo,
   setUserId,
   setUserIsLoggedin,
   setUserProfile,
@@ -35,10 +36,13 @@ const MainNavigation = () => {
     try {
       const user = await AsyncStorage.getItem("user");
       const driver = await AsyncStorage.getItem("driver");
+      const isRideStarted = await AsyncStorage.getItem("isRideStarted");
+      const rideInfoData = await AsyncStorage.getItem("StartRideInfo");
       const driverFirestore = await AsyncStorage.getItem("driverInfo");
       const userFirestore = await AsyncStorage.getItem("userInfo");
 
       if (user) {
+        setIsLoading(true);
         const userFirestoreData = JSON.parse(userFirestore);
         dispatch(setUserProfile(userFirestoreData));
         const userDatax = JSON.parse(user);
@@ -46,15 +50,26 @@ const MainNavigation = () => {
         dispatch(setUserId(userUIDx));
         dispatch(setUserIsLoggedin("student"));
         setTimeout(() => {
-          setIsLoading(false); // Set loading to false after 2 seconds
-        }, 2000); // 2000 milliseconds (2 seconds)
+          setIsLoading(false);
+        }, 2000);
       }
       if (driver) {
+        setIsLoading(true);
+
+        const rideStart = JSON.parse(isRideStarted);
+        const rideData = JSON.parse(rideInfoData);
+        dispatch(
+          setRideInfo({
+            rideData: rideData,
+            rideStarted: rideStart,
+          })
+        );
+
         const driverFirestoreData = JSON.parse(driverFirestore);
         dispatch(setUserProfile(driverFirestoreData));
-        const userData = JSON.parse(driver);
-        const userUID = userData.uid;
-        dispatch(setUserId(userUID));
+        const driverData = JSON.parse(driver);
+        const driverUID = driverData.uid;
+        dispatch(setUserId(driverUID));
 
         dispatch(setUserIsLoggedin("driver"));
         setTimeout(() => {

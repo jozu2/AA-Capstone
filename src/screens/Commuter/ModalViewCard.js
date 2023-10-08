@@ -31,6 +31,7 @@ const ModalViewCard = () => {
   });
   const [isSet, setIsSet] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChanged, setIsChanged] = useState(false);
   const onRegionChange = (region) => {
     if (numberOfPassenger === "") return;
     if (!isSet) {
@@ -38,6 +39,8 @@ const ModalViewCard = () => {
         latitude: region.latitude,
         longitude: region.longitude,
       });
+
+      setIsChanged(true);
     }
   };
   useEffect(() => {
@@ -116,7 +119,7 @@ const ModalViewCard = () => {
     } else {
       alert("Incomplete Information");
     }
-    navigation.replace("UserNavHome");
+    navigation.navigate("UserNavHome");
   };
 
   return (
@@ -170,39 +173,41 @@ const ModalViewCard = () => {
         </View>
       )}
 
-      <Pressable
-        style={{
-          position: "absolute",
-          bottom: 25,
-          zIndex: 20,
-          backgroundColor: "#fff",
-          paddingVertical: 20,
-          paddingHorizontal: 30,
-          alignSelf: "center",
-          borderRadius: 10,
-          borderWidth: 1,
-        }}
-        onPress={() => {
-          const AvailSeat =
-            cardData.Schedule.seatAvailable - cardData.Schedule.occupiedSeat;
-          if (numberOfPassenger === "") {
-            alert("Please fill up the field");
-            return;
-          }
+      {numberOfPassenger !== "" && isChanged && (
+        <Pressable
+          style={{
+            position: "absolute",
+            bottom: 25,
+            zIndex: 20,
+            backgroundColor: "#fff",
+            paddingVertical: 20,
+            paddingHorizontal: 30,
+            alignSelf: "center",
+            borderRadius: 10,
+            borderWidth: 1,
+          }}
+          onPress={() => {
+            const AvailSeat =
+              cardData.Schedule.seatAvailable - cardData.Schedule.occupiedSeat;
+            if (numberOfPassenger === "") {
+              alert("Please fill up the field");
+              return;
+            }
 
-          if (numberOfPassenger <= AvailSeat) {
-            setIsSet(true);
-          } else {
-            alert(`Sorry... current seat Available ${AvailSeat}`);
-            return;
-          }
-          setIsSet(!isSet);
-        }}
-      >
-        <Text style={{ fontSize: 18 }}>
-          {isSet ? "Cancel" : "SET PICKUP LOCATION MARK"}
-        </Text>
-      </Pressable>
+            if (numberOfPassenger <= AvailSeat) {
+              setIsSet(true);
+            } else {
+              alert(`Sorry... current seat Available ${AvailSeat}`);
+              return;
+            }
+            setIsSet(!isSet);
+          }}
+        >
+          <Text style={{ fontSize: 18 }}>
+            {isSet ? "Cancel" : "SET PICKUP LOCATION MARK"}
+          </Text>
+        </Pressable>
+      )}
       <View style={{ flex: 1 }}>
         {!isSet && (
           <View>
