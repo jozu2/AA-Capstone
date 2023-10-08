@@ -7,7 +7,7 @@ import {
   selectViewBookings,
   setUserLocationBooked,
 } from "../../redux/navSlice";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -54,7 +54,7 @@ const ViewUserAccepted = () => {
 
   return (
     <View style={{ flex: 1, marginTop: 20 }}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1}}>
         <Text
           style={{
             alignSelf: "center",
@@ -70,10 +70,10 @@ const ViewUserAccepted = () => {
           <Text
             style={{
               alignSelf: "center",
-              fontSize: 16,
-              marginTop: 20,
+              fontSize: 20,
               color: "red",
-              fontWeight: "300",
+              fontWeight: "bold",
+              margin:30,
             }}
           >
             NO USER ACCEPTED
@@ -132,19 +132,27 @@ const ViewUserAccepted = () => {
           <Text style={{ alignSelf: "center", fontSize: 20, marginTop: 20 }}>
             Comment Section
           </Text>
-          <View
-            style={{
-              height: 300,
-              backgroundColor: "#fff",
-              width: "95%",
-              alignSelf: "center",
-              marginTop: 20,
-              borderRadius: 10,
-              borderWidth: 1,
-            }}
-          ></View>
+
+          <ScrollView
+            style={styles.chatboxconatainer}
+          >
+              <View style={styles.chatbubble}></View>
+              <View style={styles.chatbubble}></View>
+              <View style={styles.chatbubble}></View>
+              <View style={styles.chatbubble}></View>
+              <View style={styles.chatbubble}></View>
+              <View style={styles.chatbubble}></View>
+                      <View style={styles.chatbubble}></View>
+          </ScrollView>
         </View>
+        <View
+            style={styles.chatinputcontainer}
+          >
+            <TextInput
+            style={{width:"95%",height:"100%" ,marginHorizontal:10, marginTop:0}}></TextInput>
+          </View>
       </ScrollView>
+      <View style={{height:9}}></View>
     </View>
   );
 };
@@ -171,4 +179,62 @@ const styles = StyleSheet.create({
     borderColor: "red",
     borderRadius: 1000,
   },
+  chatbubble:{
+     height: 75,
+    backgroundColor: "#fff",
+    borderRadius:10,
+    borderColor:"gray",
+    borderWidth:2,
+    width: "95%",
+    alignSelf: "center",
+    margin: 5,
+    shadowColor: "gray",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+                  },
+    shadowOpacity: 0.11,
+    shadowRadius: 3.84,
+    elevation: 3
+  },
+
+  chatboxconatainer:{ height:490,
+    backgroundColor: "#fff",
+    borderRadius:10,
+    marginBottom:10,
+    paddingTop:0,
+    paddingBottom:0,
+    width: "95%",
+    alignSelf: "center",
+    marginTop: 20,
+    shadowColor: "gray",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+                  },
+    shadowOpacity: 0.11,
+    shadowRadius: 3.84,
+    elevation: 3
+  },
+    chatinputcontainer:{ 
+      height: 50,
+      backgroundColor: "#fff",
+      borderRadius:10,
+      marginBottom:10,
+      borderColor:"gray",
+      borderWidth:2,
+      width: "95%",
+      alignSelf: "center",
+      marginTop: 20,
+
+      shadowColor: "gray",
+      shadowOffset: {
+          width: 0,
+          height: 2,
+                    },
+      shadowOpacity: 0.11,
+      shadowRadius: 3.84,
+      elevation: 3
+
+    }
 });
