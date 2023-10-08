@@ -20,10 +20,10 @@ const DriverStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Group>
-        {!isRideStarted ? (
-          <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
-        ) : (
+        {isRideStarted ? (
           <Stack.Screen name="RideStart" component={RideStart} />
+        ) : (
+          <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
         )}
         <Stack.Screen
           name="DriverRideRegistration"

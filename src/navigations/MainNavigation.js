@@ -57,7 +57,6 @@ const MainNavigation = () => {
         setIsLoading(true);
         const rideStart = JSON.parse(isRideStarted);
         const rideData = JSON.parse(rideInfoData);
-        console.log("mainNav", rideStart);
         dispatch(
           setRideInfo({
             rideData: rideData,

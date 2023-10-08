@@ -8,6 +8,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { db } from "./../../../config";
 import { ref, remove, onValue } from "firebase/database";
 import {
+  selectRideInfo,
   selectUserId,
   setRideInfo,
   setViewBookings,
@@ -114,6 +115,7 @@ const DriverHomePage = () => {
   const handleCreateButton = () => {
     navigation.navigate("DriverRideRegistration");
   };
+  const x = useSelector(selectRideInfo);
   return (
     <View style={{ flex: 1 }}>
       <View style={[tw`shadow-lg`, styles.topBar]}>
@@ -167,7 +169,6 @@ const DriverHomePage = () => {
                       <View style={styles.detailsContainer}>
                         <View style={[styles.IconChat]}>
                           <TouchableOpacity
-                            style={{ width: 40 }}
                             onPress={() => {
                               if (data) {
                                 dispatch(
@@ -188,7 +189,11 @@ const DriverHomePage = () => {
                               }
                             }}
                           >
-                            <AntDesign name="user" color={"black"} size={35} />
+                            <AntDesign
+                              name="user"
+                              color={"#7a7a7a"}
+                              size={35}
+                            />
                             <Text
                               style={{ paddingLeft: 5 }}
                             >{`${data.Schedule.occupiedSeat}/${data.Schedule.seatAvailable}`}</Text>
@@ -307,7 +312,7 @@ const DriverHomePage = () => {
                       </View>
                       <View style={styles.BtnContainer}>
                         <Pressable
-                          style={styles.Btnview}
+                          style={styles.Btn}
                           onPress={() => {
                             if (data) {
                               dispatch(
@@ -331,7 +336,7 @@ const DriverHomePage = () => {
                         >
                           <MaterialCommunityIcons
                             name="book-open-outline"
-                            color={"blue"}
+                            color={"#7a7a7a"}
                             size={30}
                             style={styles.bookingBtn}
                           />
@@ -393,6 +398,7 @@ const DriverHomePage = () => {
                                           rideStarted: parsedIsStarted,
                                         })
                                       );
+                                      navigation.navigate("RideStart");
                                     } catch (error) {
                                       console.error(
                                         "Error storing data:",
@@ -534,14 +540,10 @@ const styles = StyleSheet.create({
     height: 600,
     marginTop: 30,
     borderRadius: 10,
-    shadowColor: "gray",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.11,
-    shadowRadius: 3.84,
-    elevation: 3,
+    borderWidth: 1,
+    borderTopColor: "#fff",
+    borderRightColor: "gray",
+    borderLeftColor: "#242424",
   },
   mapContainer: {
     padding: 8,
@@ -588,7 +590,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 12,
     color: "#2e2e2e",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   IconThreeDot: {
     position: "absolute",
@@ -598,42 +600,17 @@ const styles = StyleSheet.create({
   Btn: {
     width: "32%",
     height: 60,
-    backgroundColor: "white",
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: "green",
+    borderTopColor: "#dbdbdb",
+    borderRightColor: "#bababa",
+    borderLeftColor: "#121212",
+    borderBottomColor: "#121212",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 9,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  Btnview: {
-    width: "32%",
-    height: 60,
-    backgroundColor: "white",
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "blue",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 9,
-    shadowRadius: 4,
-    elevation: 3,
   },
   BtnContainer: {
-    mari: 12,
+    marginTop: 12,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
@@ -641,12 +618,11 @@ const styles = StyleSheet.create({
   Start: {
     fontSize: 14,
     fontWeight: "800",
-    color: "green",
+    color: "#363636",
   },
   Ride: {
     color: "#363636",
     fontWeight: "700",
-    color: "green",
 
     fontSize: 12,
     lineHeight: 13,
