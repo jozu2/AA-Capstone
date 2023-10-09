@@ -12,7 +12,11 @@ import { useDispatch } from "react-redux";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/EvilIcons";
-import { setUserIsLoggedin } from "../../redux/navSlice";
+import {
+  setUserId,
+  setUserIsLoggedin,
+  setUserProfile,
+} from "../../redux/navSlice";
 const CommuterSettings = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -21,8 +25,12 @@ const CommuterSettings = () => {
     try {
       await AsyncStorage.removeItem("user");
       await AsyncStorage.removeItem("userInfo");
+      await AsyncStorage.removeItem("userInfo");
+      await AsyncStorage.removeItem("userInfo");
 
       dispatch(setUserIsLoggedin(""));
+      dispatch(setUserProfile(null));
+      dispatch(setUserId(null));
     } catch (error) {
       console.error("Error logging out:", error);
     }

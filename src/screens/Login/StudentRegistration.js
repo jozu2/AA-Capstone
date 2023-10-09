@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { firebase } from "../../../config";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
+import Entypo from "react-native-vector-icons/Entypo";
 
 const StudentRegistration = () => {
   const [email, setEmail] = useState("");
@@ -12,9 +13,10 @@ const StudentRegistration = () => {
   const [studentId, setStudentId] = useState("");
   const navigation = useNavigation();
   const [confirmPass, setConfirmPass] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
 
   const [showErrorPass, setShowErrorPass] = useState(false);
-
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const validateEmail = (email) => {
     if (email.endsWith("@dhvsu.edu.ph")) {
       return true;
@@ -31,7 +33,8 @@ const StudentRegistration = () => {
     password,
     firstName,
     lastName,
-    studentId
+    commuterID,
+    mobileNumber
   ) => {
     if (!validateEmail(email)) {
       return;
@@ -40,102 +43,45 @@ const StudentRegistration = () => {
       setShowErrorPass(true);
       return;
     }
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        firebase
+          .auth()
+          .currentUser.sendEmailVerification({
+            handleCodeInApp: true,
+            url: "https://aa-ride-along.firebaseapp.com",
+          })
+          .then(() => {
+            alert("Verification Email Sent");
+          })
+          .catch((err) => {
+            alert(err.message);
+          })
+          .then(() => {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(firebase.auth().currentUser.uid)
+              .set({
+                firstName,
+                lastName,
+                email,
+                commuterID,
+                mobileNumber,
+              });
 
-    try {
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
-      await firebase.auth().currentUser.sendEmailVerification({
-        handleCodeInApp: true,
-        url: "https://aa-ridealong.firebaseapp.com",
+            navigation.navigate("HomeLogin");
+          })
+          .catch((err) => {
+            alert(err.message);
+          });
+      })
+      .catch((err) => {
+        alert(err.message);
       });
-
-      await firebase
-        .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .set({
-          firstName,
-          lastName,
-          email,
-          studentId,
-        });
-
-      await firebase.auth().signOut();
-
-      alert("Verification Email Sent");
-      navigation.navigate("HomeLogin");
-    } catch (error) {
-      alert(error.message);
-    }
   };
-
-  //   return (
-  //     <View style={styles.container}>
-  //       <TextInput
-  //         style={styles.input}
-  //         defaultValue={firstName}
-  //         onChangeText={(fname) => setFirstName(fname)}
-  //         placeholder="First Name"
-  //         autoCorrect={false}
-  //         placeholderTextColor="grey"
-  //         returnKeyType="next"
-  //       />
-
-  //       <TextInput
-  //         style={styles.input}
-  //         defaultValue={lastName}
-  //         onChangeText={(lname) => setLastName(lname)}
-  //         placeholder="Last Name"
-  //         autoCorrect={false}
-  //         placeholderTextColor="grey"
-  //         returnKeyType="next"
-  //       />
-
-  //       <TextInput
-  //         style={styles.input}
-  //         defaultValue={studentId}
-  //         onChangeText={(studID) => setStudentId(studID)}
-  //         placeholder="Student ID"
-  //         autoCorrect={false}
-  //         placeholderTextColor="grey"
-  //         returnKeyType="next"
-  //       />
-
-  //       <TextInput
-  //         style={styles.input}
-  //         defaultValue={email}
-  //         onChangeText={(email) => setEmail(email)}
-  //         textContentType="emailAddress"
-  //         placeholder="Email Address"
-  //         autoCapitalize="none"
-  //         placeholderTextColor="grey"
-  //         keyboardType="email-address"
-  //         returnKeyType="next"
-  //       />
-
-  //       <TextInput
-  //         style={styles.input}
-  //         defaultValue={password}
-  //         onChangeText={(pass) => setPassword(pass)}
-  //         placeholder="Enter Password"
-  //         placeholderTextColor="grey"
-  //         returnKeyType="next"
-  //         secureTextEntry={true}
-  //         textContentType="password"
-  //         keyboardType="default"
-  //       />
-
-  //       <Pressable
-  //         style={styles.registerContainer}
-  //         onPress={() => navigation.navigate("HomeLogin")}
-  //       >
-  //         <Text style={styles.register}>want to sign in?</Text>
-  //       </Pressable>
-
-  //         <Text>SIGN UP</Text>
-  //       </Pressable>
-  //     </View>
-  //   );
-  // };
 
   return (
     <View style={styles.container}>
@@ -153,30 +99,30 @@ const StudentRegistration = () => {
           style={styles.content}
         >
           <Text style={styles.textTitle}>First Name</Text>
-
           <TextInput
             style={styles.input}
             defaultValue={firstName}
             onChangeText={(fname) => setFirstName(fname)}
+            placeholder="john"
             autoCorrect={false}
             placeholderTextColor="grey"
             returnKeyType="next"
           />
           <Text style={styles.textTitle}>Last Name</Text>
-
           <TextInput
             style={styles.input}
             defaultValue={lastName}
             onChangeText={(lname) => setLastName(lname)}
+            placeholder="doe"
             autoCorrect={false}
             placeholderTextColor="grey"
             returnKeyType="next"
           />
-          <Text style={styles.textTitle}>Student ID</Text>
-
+          <Text style={styles.textTitle}>DHVSU ID No.</Text>
           <TextInput
             style={styles.input}
             defaultValue={studentId}
+            placeholder="ID number"
             onChangeText={(studentId) => setStudentId(studentId)}
             autoCorrect={false}
             placeholderTextColor="grey"
@@ -190,7 +136,21 @@ const StudentRegistration = () => {
             textContentType="emailAddress"
             autoCapitalize="none"
             placeholderTextColor="grey"
+            placeholder="johndoe@gmail.com"
             keyboardType="email-address"
+            returnKeyType="next"
+          />
+          <Text style={styles.textTitle}>Mobile No.</Text>
+          <TextInput
+            style={styles.input}
+            defaultValue={mobileNumber}
+            onChangeText={(num) => setMobileNumber(num)}
+            textContentType="emailAddress"
+            placeholder="09******023"
+            autoCapitalize="none"
+            maxLength={11}
+            placeholderTextColor="grey"
+            keyboardType="number-pad"
             returnKeyType="next"
           />
           <Text style={styles.textTitle}>
@@ -199,29 +159,38 @@ const StudentRegistration = () => {
               <Text style={styles.textError}> * Password doesn't match</Text>
             )}
           </Text>
-
-          <TextInput
-            style={styles.input}
-            defaultValue={password}
-            onChangeText={(pass) => setPassword(pass)}
-            placeholderTextColor="grey"
-            returnKeyType="next"
-            secureTextEntry={true}
-            textContentType="password"
-            keyboardType="default"
-          />
+          <View style={styles.passAndEye}>
+            <TextInput
+              style={styles.input}
+              defaultValue={password}
+              onChangeText={(pass) => setPassword(pass)}
+              placeholder="set password"
+              returnKeyType="next"
+              secureTextEntry={!passwordVisible}
+              textContentType="password"
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+            <Entypo
+              name={passwordVisible ? "eye" : "eye-with-line"}
+              color="gray"
+              size={23}
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              style={styles.eyeIcon}
+            />
+          </View>
           <Text style={styles.textTitle}>Confirm Password</Text>
           <TextInput
             style={styles.input}
             defaultValue={confirmPass}
             onChangeText={(pass) => setConfirmPass(pass)}
             placeholderTextColor="grey"
+            secureTextEntry={!passwordVisible}
             returnKeyType="next"
-            secureTextEntry={true}
+            placeholder="re-type password"
             textContentType="password"
             keyboardType="default"
           />
-
           <Animatable.View
             animation={"fadeIn"}
             duration={1500}
@@ -231,7 +200,14 @@ const StudentRegistration = () => {
           >
             <Pressable
               onPress={() =>
-                registerUser(email, password, firstName, lastName, studentId)
+                registerUser(
+                  email,
+                  password,
+                  firstName,
+                  lastName,
+                  studentId,
+                  mobileNumber
+                )
               }
             >
               <Text style={styles.buttonText}>SIGN UP</Text>
@@ -268,6 +244,14 @@ const StudentRegistration = () => {
 export default StudentRegistration;
 
 const styles = StyleSheet.create({
+  passAndEye: {
+    width: "100%",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: "10%",
+    bottom: "15%",
+  },
   textError: {
     color: "red",
   },
@@ -283,12 +267,12 @@ const styles = StyleSheet.create({
   },
   signin: {
     textDecorationLine: "underline",
-    color: "white",
+    color: "#ee005c",
   },
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "black",
+    backgroundColor: "#001c2e",
   },
   hiddenInput: {
     width: 0,
@@ -296,12 +280,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "70%",
-    backgroundColor: "red",
     alignSelf: "center",
     borderRadius: 30,
     borderWidth: 1.5,
     borderColor: "gray",
-    backgroundColor: "black",
+    backgroundColor: "#ee005c",
     marginTop: 25,
   },
 
@@ -343,7 +326,7 @@ const styles = StyleSheet.create({
   title1: {
     alignSelf: "flex-end",
     marginRight: "5%",
-    color: "white",
+    color: "#fff",
     fontSize: 40,
     lineHeight: 40,
     textShadowColor: "rgba(0, 0, 0, 0.9)",
@@ -353,7 +336,7 @@ const styles = StyleSheet.create({
   title2: {
     alignSelf: "flex-end",
     marginRight: "3%",
-    color: "white",
+    color: "#ecca2d",
     fontSize: 20,
     marginTop: 30,
   },

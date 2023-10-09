@@ -2,7 +2,11 @@ import { Pressable, Text, View } from "react-native";
 import React from "react";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setUserIsLoggedin } from "../../redux/navSlice";
+import {
+  setUserId,
+  setUserIsLoggedin,
+  setUserProfile,
+} from "../../redux/navSlice";
 import Entypo from "react-native-vector-icons/Entypo";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +21,13 @@ const DriverSettings = () => {
   const handleLogout = async () => {
     try {
       dispatch(setUserIsLoggedin(""));
+      await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("userInfo");
+      await AsyncStorage.removeItem("driverInfo");
       await AsyncStorage.removeItem("driver");
+      dispatch(setUserIsLoggedin(""));
+      dispatch(setUserProfile(null));
+      dispatch(setUserId(null));
     } catch (error) {
       console.error("Error logging out:", error);
     }

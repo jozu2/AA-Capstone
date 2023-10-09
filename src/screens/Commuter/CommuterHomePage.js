@@ -9,6 +9,7 @@ import { StyleSheet, Image } from "react-native";
 import tw from "twrnc";
 import Octicons from "react-native-vector-icons/Octicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -18,7 +19,8 @@ import {
   setCardData,
   setSavedRequest,
 } from "./../../redux/navSlice";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
 const CommuterHomePage = () => {
   const [fetchedData, setFetchedData] = useState([]);
   const mapRef = useRef(null);
@@ -26,7 +28,10 @@ const CommuterHomePage = () => {
   const dispatch = useDispatch();
   const API_KEY = "AIzaSyCU46T5I3BvJF3_uQHta5XGih_xljGYt-I";
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [selectedCardData, setSelectedCardData] = useState(null);
+  const [indexCard, setIndexCard] = useState(null);
+
   const userID = useSelector(selectUserId);
   useEffect(() => {
     const dbRef = ref(db, "POSTED_RIDES");
@@ -67,274 +72,156 @@ const CommuterHomePage = () => {
     navigation.openDrawer();
   };
   return (
-    <View style={[tw`flex-1`, { backgroundColor: "#ebebeb" }]}>
-      <View style={[tw`shadow-lg`, styles.topBar]}>
+    <View style={{ flex: 1, paddingTop: 120 }}>
+      <View
+        style={[
+          {
+            alignSelf: "center",
+            width: "60%",
+            borderRadius: 10,
+            position: "absolute",
+            bottom: 10,
+            zIndex: 10,
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+          },
+        ]}
+      >
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
+            justifyContent: "space-evenly",
+            paddingVertical: 15,
+          }}
+        >
+          <MaterialIcons
+            name="notifications-none"
+            size={35}
+            color={"#01ccdd"}
+            style={{
+              backgroundColor: "transparent",
+            }}
+          />
+          <MaterialIcons name="list-alt" size={35} color={"#ecca2d"} />
+        </View>
+      </View>
+      <LinearGradient
+        colors={["#15b99e", "#081e30"]}
+        style={[tw`shadow-lg`, styles.topBar]}
+      >
         <EvilIcons
           style={{ position: "absolute", bottom: 25, left: 10 }}
           name={"navicon"}
           size={40}
-          color={"#242424"}
+          color={"#fff"}
           onPress={handleOpenDrawer}
         />
         <Image
-          source={require("./../../assets/Icon.png")}
+          source={require("./../../assets/IconC.png")}
           style={{ width: 60, height: 60, alignSelf: "center" }}
         />
-        <View style={{ position: "absolute", right: -20, bottom: 25 }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("ViewRequest");
-            }}
-          >
-            <Text
-              style={{
-                borderRadius: 20,
-                textAlign: "center",
-                paddingHorizontal: 10,
-                borderWidth: 1,
-                alignSelf: "flex-end",
-                marginRight: 30,
-                fontSize: 18,
-              }}
-            >
-              View
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={[tw`shadow-md`, styles.MainCardContainerx]}>
-        <View
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 1000,
-            backgroundColor: "#f7f7f7",
-          }}
-        ></View>
-        <View
-          style={{
-            width: 150,
-            height: 15,
-            backgroundColor: "#f7f7f7",
-            position: "absolute",
-            left: 70,
-            top: 25,
-          }}
-        ></View>
-        <View
-          style={{
-            width: 80,
-            height: 15,
-            backgroundColor: "#f7f7f7",
-            position: "absolute",
-            left: 70,
-            top: 48,
-          }}
-        ></View>
-        <View
-          style={{
-            width: "100%",
-            height: 320,
-            backgroundColor: "#f7f7f7",
-            marginTop: 80,
-          }}
-        ></View>
-        {fetchedData.length === 0 ? (
-          <View>
-            <Text
-              style={{
-                color: "gray",
-                fontSize: 20,
-                position: "absolute",
-                bottom: 200,
-                alignSelf: "center",
-              }}
-            >
-              No ride post at the moment
-            </Text>
-          </View>
-        ) : (
-          <View></View>
-        )}
-      </View>
-      <View style={styles.btnContainer}>
-        <Pressable
-          style={styles.btn}
-          onPress={() => {
-            if (fetchedData.length === 0) {
-              return;
-            } else {
-              swiperRef.current.swipeLeft();
-            }
-          }}
-        >
-          <AntDesign name={"close"} size={40} color={"#db000f"} />
-        </Pressable>
-
-        <Pressable
-          style={styles.btn}
-          onPress={() => {
-            if (fetchedData.length === 0) {
-              return;
-            } else {
-              dispatch(setCardData(selectedCardData));
-              navigation.navigate("ModalViewCard");
-            }
-          }}
-        >
-          <AntDesign name={"check"} size={40} color={"#04db00"} />
-        </Pressable>
-      </View>
-
-      {isLoading ? (
-        <Modal transparent={true} animationType="fade">
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        </Modal>
-      ) : (
-        <View>
-          {fetchedData.length > 0 && (
-            <Swiper
-              cards={fetchedData}
-              cardIndex={0}
-              animateCardOpacity
-              infinite={true}
-              verticalSwipe={false}
-              ref={swiperRef}
-              onSwipedRight={() => {
-                if (selectedCardData) {
-                  dispatch(setCardData(selectedCardData));
-                  navigation.navigate("ModalViewCard");
-                }
-              }}
-              overlayLabels={{
-                right: {
-                  title: " View ",
-                  style: {
-                    label: {
-                      marginTop: 100,
-                      backgroundColor: "green",
-                      textAlign: "left",
-                      color: "white",
-                      fontSize: 30,
-                      paddingLeft: 20,
-                    },
-                  },
-                },
-                left: {
-                  title: "X",
-                  style: {
-                    label: {
-                      fontSize: 30,
-                      paddingRight: 20,
-                      marginTop: 100,
-                      backgroundColor: "red",
-                      textAlign: "right",
-                      color: "#fff",
-                    },
-                  },
-                },
-              }}
-              renderCard={(card) => (
-                <View>
-                  <View style={[tw`shadow-md`, styles.MainCardContainer]}>
+        <View style={{ position: "absolute", right: -20, bottom: 25 }}></View>
+      </LinearGradient>
+      <ScrollView style={{ flex: 1, backgroundColor: "#2e3b45", padding: 10 }}>
+        {fetchedData.map((card, index) => {
+          return (
+            <View key={index}>
+              <View>
+                <View style={[tw`shadow-lg`, styles.MainCardContainer]}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: "#0a2133",
+                      borderTopLeftRadius: 8,
+                      borderTopRightRadius: 8,
+                      paddingVertical: 8,
+                      paddingHorizontal: 17,
+                    }}
+                  >
+                    <View style={styles.profilePic}></View>
                     <View
                       style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
+                        marginLeft: 10,
                       }}
                     >
-                      <View style={styles.profilePic}></View>
-                      <View
-                        style={{
-                          marginLeft: 10,
-                        }}
-                      >
-                        <Text
-                          style={styles.profileNameText}
-                        >{`${card?.driverProfile.firstName} ${card?.driverProfile.lastName} `}</Text>
-                        <Text style={styles.email}>Posted: 3h ago</Text>
-                      </View>
                       <Text
-                        style={{
-                          fontWeight: "400",
-                          alignSelf: "flex-start",
-                          marginTop: 12,
-                          fontSize: 13,
-                          color: "gray",
-                        }}
-                      >
-                        - Wants to share a ride
-                      </Text>
+                        style={styles.profileNameText}
+                      >{`${card.driverProfile.firstName} ${card.driverProfile.lastName} `}</Text>
+                      <Text style={styles.email}>Posted: 3h ago</Text>
                     </View>
-                    {/* ////////////////////////////////////////////// */}
-                    <View style={styles.containerTextBott}>
+                    <Text
+                      style={{
+                        fontWeight: "400",
+                        alignSelf: "flex-start",
+                        marginTop: 12,
+                        fontSize: 13,
+                        color: "#ebebeb",
+                      }}
+                    >
+                      - Wants to share a ride
+                    </Text>
+                  </View>
+                  {/* ////////////////////////////////////////////// */}
+                  <View style={styles.containerTextBott}>
+                    <View
+                      style={[
+                        tw`flex flex-row`,
+                        {
+                          justifyContent: "flex-start",
+                          alignItems: "center",
+                        },
+                      ]}
+                    >
                       <View
-                        style={[
-                          tw`flex flex-row`,
-                          {
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                          },
-                        ]}
+                        style={{ justifyContent: "center", paddingRight: 10 }}
                       >
-                        <View
-                          style={{ justifyContent: "center", paddingRight: 10 }}
-                        >
-                          <Octicons color={"green"} size={25} name={"dash"} />
-                        </View>
-                        <View>
-                          <View>
-                            <Text
-                              style={styles.textPlaceTitle}
-                            >{`Origin`}</Text>
-                            <Text
-                              style={styles.textPlace}
-                            >{`${card?.coordinates.origin.location}`}</Text>
-                          </View>
-                        </View>
+                        <Octicons color={"green"} size={25} name={"dash"} />
                       </View>
-
-                      <View
-                        style={[
-                          tw`flex flex-row`,
-                          {
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            marginTop: 2,
-                          },
-                        ]}
-                      >
-                        <View
-                          style={{ justifyContent: "center", paddingRight: 10 }}
-                        >
-                          <Octicons color={"red"} size={25} name={"dash"} />
-                        </View>
+                      <View>
                         <View>
-                          <View>
-                            <Text
-                              style={styles.textPlaceTitle}
-                            >{`Destination`}</Text>
-                            <Text
-                              style={styles.textPlace}
-                            >{`${card?.coordinates.destination.location}`}</Text>
-                          </View>
+                          <Text style={styles.textPlaceTitle}>{`Origin`}</Text>
+                          <Text
+                            style={styles.textPlace}
+                          >{`${card?.coordinates.origin.location}`}</Text>
                         </View>
                       </View>
                     </View>
 
-                    {/* ////////////////////////////////////////////////////////////// */}
+                    <View
+                      style={[
+                        tw`flex flex-row`,
+                        {
+                          justifyContent: "flex-start",
+                          alignItems: "center",
+                          marginTop: 2,
+                        },
+                      ]}
+                    >
+                      <View
+                        style={{ justifyContent: "center", paddingRight: 10 }}
+                      >
+                        <Octicons color={"red"} size={25} name={"dash"} />
+                      </View>
+                      <View>
+                        <View>
+                          <Text
+                            style={styles.textPlaceTitle}
+                          >{`Destination`}</Text>
+                          <Text
+                            style={styles.textPlace}
+                          >{`${card?.coordinates.destination.location}`}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
 
-                    <View>
+                  {/* ////////////////////////////////////////////////////////////// */}
+
+                  <View style={{ paddingHorizontal: 12 }}>
+                    {showModal && indexCard === index && (
                       <MapView
                         showsMyLocationButton={true}
                         showsUserLocation={true}
@@ -344,6 +231,7 @@ const CommuterHomePage = () => {
                           zIndex: -2,
                           top: 13,
                         }}
+                        scrollEnabled={false}
                         region={{
                           latitude: 15.0794,
                           longitude: 120.62,
@@ -354,11 +242,11 @@ const CommuterHomePage = () => {
                         <Marker
                           style={{ width: 200, height: 200 }}
                           coordinate={{
-                            latitude: card?.coordinates.origin.latitude,
-                            longitude: card?.coordinates.origin.longitude,
+                            latitude: card.coordinates.origin.latitude,
+                            longitude: card.coordinates.origin.longitude,
                           }}
                           title="Origin"
-                          description={card?.coordinates.origin.location}
+                          description={card.coordinates.origin.location}
                           identifier="origin"
                           pinColor="green"
                         ></Marker>
@@ -387,11 +275,11 @@ const CommuterHomePage = () => {
                           identifier="destination"
                           apikey={API_KEY}
                           strokeWidth={4}
-                          strokeColor="red"
+                          strokeColor="#ee005c"
                           timePrecision="now"
                           optimizeWaypoints={true}
                           onReady={(result) => {
-                            setSelectedCardData(card);
+                            setIndexCard(index);
 
                             mapRef.current.fitToCoordinates(
                               result.coordinates,
@@ -407,70 +295,139 @@ const CommuterHomePage = () => {
                           }}
                         />
                       </MapView>
-                    </View>
+                    )}
+                  </View>
+
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 20,
+                    }}
+                  >
                     <View
                       style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        marginTop: 20,
-                        marginLeft: 10,
+                        height: 1,
+                        width: "25%",
+                        backgroundColor: "#121212",
                       }}
-                    >
-                      <View>
-                        <View style={styles.flexRow}>
-                          <MaterialCommunityIcons
-                            name={"calendar-month"}
-                            size={23}
-                            color={"#474747"}
-                          />
-                          <Text
-                            style={{
-                              fontSize: 18,
-                              fontWeight: "300",
-                              paddingLeft: 5,
-                            }}
-                          >
-                            {card?.Schedule.When}
-                          </Text>
-                        </View>
-                        <View style={styles.flexRow}>
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              fontWeight: "300",
-                              paddingLeft: 65,
-                              lineHeight: 15,
-                            }}
-                          >
-                            {`${card?.Schedule.timeOfDeparture}`}
-                          </Text>
-                        </View>
-                      </View>
-                      <View>
+                    ></View>
+                    <Text style={{ paddingHorizontal: 20, fontSize: 16 }}>
+                      Schedule
+                    </Text>
+                    <View
+                      style={{
+                        height: 1,
+                        width: "25%",
+                        backgroundColor: "#121212",
+                      }}
+                    ></View>
+                  </View>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 10,
+                      marginLeft: 10,
+                    }}
+                  >
+                    <View>
+                      <View style={styles.flexRow}>
+                        <MaterialCommunityIcons
+                          name={"calendar-month"}
+                          size={23}
+                          color={"#474747"}
+                        />
                         <Text
                           style={{
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: "300",
-                            paddingRight: 20,
-                            paddingTop: 6,
-                            color: "#636363",
+                            paddingLeft: 5,
                           }}
-                        >{`${card?.Schedule.occupiedSeat} / ${card?.Schedule.seatAvailable}`}</Text>
+                        >
+                          {card.Schedule.When}
+                        </Text>
+                      </View>
+                      <View style={styles.flexRow}>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "300",
+                            paddingLeft: 65,
+                            lineHeight: 15,
+                          }}
+                        >
+                          {`${card.Schedule.timeOfDeparture}`}
+                        </Text>
                       </View>
                     </View>
+                    <View>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "300",
+                          paddingRight: 20,
+                          paddingTop: 6,
+                          color: "#636363",
+                        }}
+                      >{`${card.Schedule.occupiedSeat} / ${card.Schedule.seatAvailable}`}</Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      paddingVertical: 10,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIndexCard(index);
+
+                        setShowModal(true);
+                      }}
+                      style={{ alignSelf: "center" }}
+                    >
+                      {indexCard === index && showModal ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            setShowModal(false);
+                          }}
+                        >
+                          <Image
+                            source={require("./../../assets/arrow.gif")}
+                            style={{
+                              width: 55,
+                              height: 20,
+                              transform: [{ scaleY: -1 }],
+                            }}
+                          />
+                        </TouchableOpacity>
+                      ) : (
+                        <Image
+                          source={require("./../../assets/arrow.gif")}
+                          style={{
+                            width: 55,
+                            height: 20,
+                          }}
+                        />
+                      )}
+                    </TouchableOpacity>
                   </View>
                 </View>
-              )}
-            ></Swiper>
-          )}
-        </View>
-      )}
+              </View>
+            </View>
+          );
+        })}
+        <View style={{ height: 150 }}></View>
+      </ScrollView>
     </View>
   );
 };
 
 export default CommuterHomePage;
+
 const styles = StyleSheet.create({
   topBar: {
     backgroundColor: "#fff",
@@ -479,7 +436,6 @@ const styles = StyleSheet.create({
     zIndex: 20000,
     paddingTop: "10%",
     paddingBottom: "5%",
-    borderWidth: 1,
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderLeftWidth: 0,
@@ -505,38 +461,38 @@ const styles = StyleSheet.create({
     borderColor: "red",
   },
   MainCardContainer: {
-    marginTop: "30%",
+    marginTop: "5%",
     backgroundColor: "#fff",
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    borderRadius: 22,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderBottomLeftRadius: 22,
+    borderBottomRightRadius: 22,
+    marginBottom: "20%",
+    marginTop: "15%",
+    borderBottomWidth: 6,
+    borderLeftWidth: 1,
+
+    borderBottomColor: "#ee005c",
+    borderLeftColor: "#ecca2d",
   },
-  MainCardContainerx: {
-    marginTop: "40%",
-    backgroundColor: "#fff",
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    borderRadius: 22,
-    height: 520,
-    width: "90%",
-    alignSelf: "center",
-    position: "absolute",
-  },
+
   profileNameText: {
     fontSize: 16,
     marginTop: 3,
     fontWeight: "bold",
+    color: "#ee005c",
   },
   email: {
     lineHeight: 12,
     fontSize: 12,
     fontWeight: "300",
     flexDirection: "column",
+    color: "#ebebeb",
   },
-  textbot: {},
   containerTextBott: {
     marginTop: 7,
-    paddingHorizontal: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
   },
   textPlaceTitle: {
     fontSize: 12,

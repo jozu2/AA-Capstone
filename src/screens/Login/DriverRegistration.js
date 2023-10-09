@@ -18,7 +18,16 @@ const DriverRegistration = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const navigation = useNavigation();
-
+  const validateEmail = (email) => {
+    if (email.endsWith("@dhvsu.edu.ph")) {
+      return true;
+    } else {
+      alert(
+        'Invalid Email Please enter your valid dhvsu email address ending with "@dhvsu.edu.ph".'
+      );
+      return false;
+    }
+  };
   resgisterDriver = async (
     email,
     password,
@@ -28,6 +37,9 @@ const DriverRegistration = () => {
     confirmPass,
     mobileNumber
   ) => {
+    if (!validateEmail(email)) {
+      return;
+    }
     if (password !== confirmPass) {
       setShowErrorPass(true);
       return;
@@ -40,7 +52,7 @@ const DriverRegistration = () => {
           .auth()
           .currentUser.sendEmailVerification({
             handleCodeInApp: true,
-            url: "https://aa-ridealong.firebaseapp.com",
+            url: "https://aa-ride-along.firebaseapp.com",
           })
           .then(() => {
             alert("Verification Email Sent");
@@ -109,7 +121,7 @@ const DriverRegistration = () => {
             placeholderTextColor="grey"
             returnKeyType="next"
           />
-          <Text style={styles.textTitle}>DHVSU ID Number</Text>
+          <Text style={styles.textTitle}>DHVSU ID No.</Text>
 
           <TextInput
             style={styles.input}
@@ -262,12 +274,12 @@ const styles = StyleSheet.create({
   },
   signin: {
     textDecorationLine: "underline",
-    color: "white",
+    color: "#ebca2a",
   },
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "black",
+    backgroundColor: "#001c2e",
   },
   hiddenInput: {
     width: 0,
@@ -275,12 +287,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "70%",
-    backgroundColor: "red",
     alignSelf: "center",
     borderRadius: 30,
     borderWidth: 1.5,
     borderColor: "gray",
-    backgroundColor: "black",
+    backgroundColor: "#ebca2a",
     marginTop: 25,
   },
 
@@ -332,7 +343,7 @@ const styles = StyleSheet.create({
   title2: {
     alignSelf: "flex-end",
     marginRight: "3%",
-    color: "white",
+    color: "#ee005c",
     fontSize: 20,
     marginTop: 30,
   },

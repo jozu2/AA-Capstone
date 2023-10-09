@@ -1,15 +1,36 @@
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
+import { selectUserId, selectUserProfile } from "../../redux/navSlice";
 
 const LoginHome = () => {
   const navigation = useNavigation();
-
+  const userID = useSelector(selectUserId);
+  const userIDx = useSelector(selectUserProfile);
+  console.log(userID);
+  console.log(userIDx);
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("userInfo");
+      await AsyncStorage.removeItem("driver");
+      await AsyncStorage.removeItem("driverInfo");
+      await AsyncStorage.removeItem("isRideStarted");
+      await AsyncStorage.removeItem("StartRideInfo");
+    } catch (error) {
+      console.error("Error deleting async storage out:", error);
+    }
+  };
+  useEffect(() => {
+    handleLogout();
+  }, []);
   return (
     <LinearGradient
-      colors={["black", "black", "gray", "#fff"]}
+      colors={["#15b99e", "#081e30", "#081e30"]}
       style={styles.Main}
     >
       <View style={styles.containerone}>
@@ -21,19 +42,10 @@ const LoginHome = () => {
           style={styles.logoContainer}
         >
           <Image
-            source={require("../../assets/logo.png")}
+            source={require("../../assets/Icon.png")}
             style={styles.logo}
           />
         </Animatable.View>
-        <Animatable.Text
-          animation="fadeIn"
-          duration={1900}
-          delay={100}
-          iterationCount={1}
-          style={styles.logoTitle}
-        >
-          Angkas Atad
-        </Animatable.Text>
       </View>
       <Animatable.View
         animation={"fadeInUp"}
@@ -47,19 +59,30 @@ const LoginHome = () => {
           duration={1200}
           iterationCount={1}
         >
-          <Text style={styles.h1}>Login As</Text>
-
-          <View style={[styles.buttonBlueContainer]}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignSelf: "center",
+            }}
+          >
+            <Text style={styles.h1}>Login</Text>
+            <Text style={[styles.h1, { color: "#ee005c" }]}>{` As`}</Text>
+          </View>
+          <LinearGradient
+            colors={["#ebebeb", "#ebebeb"]}
+            style={[styles.buttonBlueContainer]}
+          >
             <Pressable
               style={[styles.buttonBlue]}
               onPress={() => navigation.navigate("StudentLogin")}
             >
               <Text style={styles.buttonText}>COMMUTER</Text>
             </Pressable>
-          </View>
+          </LinearGradient>
 
           <LinearGradient
-            colors={["#404040", "black", "black"]}
+            colors={["#ebebeb", "#ebebeb"]}
             style={[styles.buttonBlueContainerTwo]}
           >
             <Pressable onPress={() => navigation.navigate("DriverLogin")}>
@@ -78,7 +101,7 @@ const styles = StyleSheet.create({
   buttonBlueContainerTwo: {
     width: "80%",
     marginTop: "5%",
-    borderRadius: 12,
+    borderRadius: 30,
     borderWidth: 2,
     borderTopColor: "#e6e6e6",
     borderRightColor: "#ababab",
@@ -97,7 +120,6 @@ const styles = StyleSheet.create({
   },
   containerone: {
     backgroundColor: "transparent",
-
     height: "47%",
 
     justifyContent: "center",
@@ -120,7 +142,7 @@ const styles = StyleSheet.create({
   buttonTexttwo: {
     fontSize: 20,
     alignSelf: "center",
-    color: "white",
+    color: "black",
     paddingVertical: 15,
     letterSpacing: 1.1,
     textShadowColor: "rgba(0, 0, 0, 0.2)",
@@ -153,7 +175,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "black",
     letterSpacing: 0.5,
-    alignSelf: "center",
     textShadowColor: "rgba(0, 0, 0, 0.55)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 1,
@@ -164,9 +185,9 @@ const styles = StyleSheet.create({
     width: "95%",
     alignSelf: "center",
     height: "50%",
-    bottom: "10%",
+    bottom: "13%",
     borderRadius: 30,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
     blurRadius: 2,
     borderWidth: 2,
     borderTopColor: "#e6e6e6",
@@ -175,7 +196,7 @@ const styles = StyleSheet.create({
   logo: {
     resizeMode: "cover",
     height: 130,
-    width: 230,
+    width: 130,
     alignSelf: "center",
   },
   logoContainer: {
@@ -186,13 +207,5 @@ const styles = StyleSheet.create({
 
     alignSelf: "center",
     justifyContent: "center",
-  },
-  logoTitle: {
-    alignSelf: "center",
-    fontSize: 32,
-    textShadowColor: "rgba(0, 0, 0, 0.9)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 5,
-    color: "white",
   },
 });

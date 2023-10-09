@@ -22,7 +22,6 @@ const DriverLogin = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
-    // Check if the user is already authenticated
     checkUserAuthentication();
   }, []);
 
@@ -54,15 +53,15 @@ const DriverLogin = () => {
           const userData = userDocs.data();
           await AsyncStorage.setItem("driverInfo", JSON.stringify(userData));
 
-          dispatch(setUserIsLoggedin("driver"));
           await AsyncStorage.setItem("driver", JSON.stringify(user));
+          dispatch(setUserIsLoggedin("driver"));
         } else {
           alert("Please log in your Driver Account");
         }
       } else {
         firebase.auth().currentUser.sendEmailVerification({
           handleCodeInApp: true,
-          url: "https://aa-ridealong.firebaseapp.com",
+          url: "https://aa-ride-along.firebaseapp.com",
         });
         alert("Please verify your email before proceeding.");
         await firebase.auth().signOut();
@@ -81,7 +80,7 @@ const DriverLogin = () => {
         "Check your email to reset your password."
       );
     } catch (error) {
-      console.error("Password Reset Failed", error); // Log the error for debugging
+      console.error("Password Reset Failed", error);
       Alert.alert("Password Reset Failed", error.message);
     }
   };
@@ -93,7 +92,7 @@ const DriverLogin = () => {
         delay={100}
         style={styles.containerone}
       >
-        <Text style={styles.title2}>Hello!</Text>
+        <Text style={styles.title2}>Driver </Text>
         <Text style={styles.title1}>Sign In</Text>
       </Animatable.View>
       <Animatable.View
@@ -108,7 +107,7 @@ const DriverLogin = () => {
           iterationCount={1}
           style={styles}
         >
-          <Text style={styles.inputemail}>Gmail</Text>
+          <Text style={styles.inputemail}>Dhvsu Email</Text>
           <TextInput
             style={styles.input}
             defaultValue={email}
@@ -143,28 +142,31 @@ const DriverLogin = () => {
             animation={"fadeInUp"}
             duration={2000}
             iterationCount={1}
-            style={styles.button}
           >
-            <Pressable
+            <TouchableOpacity
+              style={styles.button}
               onPress={() => loginDriver(email, password)}
               disabled={!email || !password}
             >
               <Text style={styles.buttonText}>SIGN IN</Text>
-            </Pressable>
+            </TouchableOpacity>
+
+            <Animatable.View
+              animation={"slideInUp"}
+              duration={1500}
+              delay={200}
+              iterationCount={1}
+              style={styles.registerContainer}
+            >
+              <Text style={styles.noAccText}>no driver account?</Text>
+              <Pressable
+                onPress={() => navigation.navigate("DriverRegistration")}
+              >
+                <Text style={styles.signUpText}> Sign Up</Text>
+              </Pressable>
+            </Animatable.View>
           </Animatable.View>
         </Animatable.View>
-      </Animatable.View>
-      <Animatable.View
-        animation={"slideInUp"}
-        duration={1500}
-        delay={200}
-        iterationCount={1}
-        style={styles.registerContainer}
-      >
-        <Text style={styles.noAccText}>No driver account?</Text>
-        <Pressable onPress={() => navigation.navigate("DriverRegistration")}>
-          <Text style={styles.signUpText}> Sign Up</Text>
-        </Pressable>
       </Animatable.View>
     </View>
   );
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#001c2e",
   },
   title1: {
     alignSelf: "flex-start",
@@ -199,27 +201,24 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: "8%",
     top: "-15%",
-    color: "white",
+    color: "#ebca2a",
     fontSize: 20,
   },
   button: {
     width: "80%",
     marginTop: "10%",
-    backgroundColor: "black",
+    backgroundColor: "#1c9c87",
     borderRadius: 30,
     alignSelf: "center",
     borderWidth: 1.5,
-    borderColor: "gray",
+    borderColor: "black",
   },
   buttonText: {
     fontSize: 22,
-    color: "white",
+    color: "#fff",
     alignSelf: "center",
     paddingBottom: 10,
     paddingTop: 10,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 5,
   },
 
   input: {
@@ -230,8 +229,9 @@ const styles = StyleSheet.create({
   },
 
   containerone: {
-    backgroundColor: "black",
+    backgroundColor: "#001c2e",
     height: "47%",
+
     justifyContent: "center",
   },
   containertwo: {
@@ -248,12 +248,13 @@ const styles = StyleSheet.create({
     marginRight: "10%",
     marginTop: 20,
     fontSize: 14,
+    color: "#ee005c",
   },
   signUpText: {
     fontWeight: "bold",
     fontSize: 17,
-    color: "black",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
+    color: "#01ccdd",
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 0.5,
   },
@@ -261,18 +262,15 @@ const styles = StyleSheet.create({
 
   registerContainer: {
     alignItems: "flex-end",
-    position: "absolute",
-    bottom: "5%",
+    top: 140,
     right: "5%",
   },
   inputemail: {
     marginLeft: "10%",
     marginTop: "15%",
-    color: "black",
   },
   inputpassword: {
     marginLeft: "10%",
     marginTop: "5%",
-    color: "black",
   },
 });

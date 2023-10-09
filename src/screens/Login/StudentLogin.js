@@ -18,7 +18,6 @@ const StudentLogin = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
-    // Check if the user is already authenticated
     checkUserAuthentication();
   }, []);
 
@@ -27,7 +26,6 @@ const StudentLogin = () => {
       const user = await AsyncStorage.getItem("user");
 
       if (user) {
-        // User is already authenticated, navigate to the dashboard
         navigation.navigate("CommuterHomePage");
       }
     } catch (error) {
@@ -50,25 +48,24 @@ const StudentLogin = () => {
         if (userDoc.exists) {
           const userData = userDoc.data();
           await AsyncStorage.setItem("userInfo", JSON.stringify(userData));
-
-          dispatch(setUserIsLoggedin("student"));
           await AsyncStorage.setItem("user", JSON.stringify(user));
+          dispatch(setUserIsLoggedin("student"));
         } else {
           alert("Please log in to your Student Account");
         }
       } else {
         firebase.auth().currentUser.sendEmailVerification({
           handleCodeInApp: true,
-          url: "https://aa-ridealong.firebaseapp.com",
+          url: "https://aa-ride-along.firebaseapp.com",
         });
 
         alert("Please verify your email before proceeding.");
         await firebase.auth().signOut();
       }
     } catch (error) {
-      console.log("Firebase Error:", error.message); // Log the error message
+      console.log("Firebase Error:", error.message);
       alert("Invalid Email/Password");
-      return; // Add this return statement to prevent further execution
+      return;
     }
   };
   const handleResetPassword = async () => {
@@ -81,7 +78,7 @@ const StudentLogin = () => {
         "Check your email to reset your password."
       );
     } catch (error) {
-      console.error("Password Reset Failed", error); // Log the error for debugging
+      console.error("Password Reset Failed", error);
       Alert.alert("Password Reset Failed", error.message);
     }
   };
@@ -93,7 +90,7 @@ const StudentLogin = () => {
         delay={100}
         style={styles.containerone}
       >
-        <Text style={styles.title2}>Hello!</Text>
+        <Text style={styles.title2}>Commuter</Text>
         <Text style={styles.title1}>Sign In</Text>
       </Animatable.View>
       <Animatable.View
@@ -108,7 +105,7 @@ const StudentLogin = () => {
           iterationCount={1}
           style={styles}
         >
-          <Text style={styles.inputemail}>Gmail</Text>
+          <Text style={styles.inputemail}>Dhvsu Email</Text>
           <TextInput
             style={styles.input}
             defaultValue={email}
@@ -151,20 +148,23 @@ const StudentLogin = () => {
             >
               <Text style={styles.buttonText}>SIGN IN</Text>
             </TouchableOpacity>
+
+            <Animatable.View
+              animation={"slideInUp"}
+              duration={1500}
+              delay={200}
+              iterationCount={1}
+              style={styles.registerContainer}
+            >
+              <Text style={styles.noAccText}>No commuter account?</Text>
+              <Pressable
+                onPress={() => navigation.navigate("StudentRegistration")}
+              >
+                <Text style={styles.signUpText}> Sign Up</Text>
+              </Pressable>
+            </Animatable.View>
           </Animatable.View>
         </Animatable.View>
-      </Animatable.View>
-      <Animatable.View
-        animation={"slideInUp"}
-        duration={1500}
-        delay={200}
-        iterationCount={1}
-        style={styles.registerContainer}
-      >
-        <Text style={styles.noAccText}>No commuter account?</Text>
-        <Pressable onPress={() => navigation.navigate("StudentRegistration")}>
-          <Text style={styles.signUpText}> Sign Up</Text>
-        </Pressable>
       </Animatable.View>
     </View>
   );
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#001c2e",
   },
   title1: {
     alignSelf: "flex-start",
@@ -200,27 +200,24 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: "8%",
     top: "-15%",
-    color: "white",
+    color: "#ee005c",
     fontSize: 20,
   },
   button: {
     width: "80%",
     marginTop: "10%",
-    backgroundColor: "black",
+    backgroundColor: "#1c9c87",
     borderRadius: 30,
     alignSelf: "center",
     borderWidth: 1.5,
-    borderColor: "gray",
+    borderColor: "black",
   },
   buttonText: {
     fontSize: 22,
-    color: "white",
+    color: "#fff",
     alignSelf: "center",
     paddingBottom: 10,
     paddingTop: 10,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 5,
   },
 
   input: {
@@ -231,8 +228,9 @@ const styles = StyleSheet.create({
   },
 
   containerone: {
-    backgroundColor: "black",
+    backgroundColor: "#001c2e",
     height: "47%",
+
     justifyContent: "center",
   },
   containertwo: {
@@ -249,11 +247,12 @@ const styles = StyleSheet.create({
     marginRight: "10%",
     marginTop: 20,
     fontSize: 14,
+    color: "#ecca2d",
   },
   signUpText: {
     fontWeight: "bold",
     fontSize: 17,
-    color: "black",
+    color: "#01ccdd",
     textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 0.5,
@@ -262,18 +261,15 @@ const styles = StyleSheet.create({
 
   registerContainer: {
     alignItems: "flex-end",
-    position: "absolute",
-    bottom: "5%",
+    top: 140,
     right: "5%",
   },
   inputemail: {
     marginLeft: "10%",
     marginTop: "15%",
-    color: "black",
   },
   inputpassword: {
     marginLeft: "10%",
     marginTop: "5%",
-    color: "black",
   },
 });
