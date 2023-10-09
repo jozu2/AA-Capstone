@@ -36,6 +36,9 @@ const ViewUserBookingDetails = () => {
             borderRadius: 10,
             padding: 10,
             marginTop: 10,
+            height:"90%",
+       
+            
           },
         ]}
       >
@@ -47,8 +50,10 @@ const ViewUserBookingDetails = () => {
             ref={mapRef}
             style={{
               flex: 1,
-              paddingVertical: 245,
+              paddingVertical:"50%",
+              
               zIndex: -2,
+            
             }}
             region={{
               latitude: driverCoordinates.origin.latitude,
@@ -134,14 +139,14 @@ const ViewUserBookingDetails = () => {
             />
           </MapView>
         </View>
-        <View style={{ alignSelf: "center", marginTop: 20 }}>
-          <Text style={styles.txtinfo}>
+        <View style={{ height:"20%", width:"100%", alignSelf: "center", marginTop: 20 }}>
+          <Text style={styles.txtinfo1}>
             PICK UP: 
             <Text style={{color:"black"}}> {userLocation.rideInfo.description}</Text>
             </Text>
           <Text style={styles.txtinfo} >
             DISTANCE:
-             <Text style={{color:"black"}}> {`${userLocation.rideInfo.distance} Kilometers`}</Text>
+             <Text style={{color:"black" }}> {`${userLocation.rideInfo.distance} Kilometers`}</Text>
           </Text>
           <Text style={styles.txtinfo} >
             No. of PASSENGER:
@@ -150,11 +155,13 @@ const ViewUserBookingDetails = () => {
         </View>
         <View
           style={{
-            display: "flex",
+            width:"100%",
+            height:"15%",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "space-evenly",
+            alignItems:"center",
             alignSelf: "center",
-            marginTop:30,
+            marginTop:5,
           }}
         >
           <TouchableOpacity
@@ -209,16 +216,16 @@ export default ViewUserBookingDetails;
 
 const styles = StyleSheet.create({
   btn: {
-    width: 170,
-    height: 65,
+    width: "100%",
+    height: 60,
     backgroundColor: "#fff",
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "gray",
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 10,
-    marginBottom: 15,
+    alignSelf:"auto",
+paddingHorizontal:15,
     shadowColor: "gray",
     shadowOffset: {
         width: 0,
@@ -228,13 +235,18 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 3
   },
-
-  
-
   txtinfo: {
+    height:"20%",
     fontSize:13,
     fontWeight:'bold',
-    marginTop:10,
+    marginTop:5,
+    color:"green"
+  },
+  txtinfo1: {
+    height:"45%",
+    fontSize:13,
+    fontWeight:'bold',
+    marginTop:5,
     color:"green"
   },
 });

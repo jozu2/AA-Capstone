@@ -73,6 +73,10 @@ const ViewBookings = () => {
               <View>
                 <TouchableOpacity
                   style={[tw`shadow-md`, styles.container]}
+                  onPress={() => {
+                    navigation.navigate("BookingDetails");
+                    dispatch(setUserLocationBooked(booking));
+                  }}
                   
                 >
                   <View style={styles.nameAndProfileContainer}>
@@ -109,15 +113,7 @@ const ViewBookings = () => {
                         1h ago
                       </Text>
                     </View>
-                         <TouchableOpacity
-            style={styles.btn}
-            onPress={() => {
-              navigation.navigate("BookingDetails");
-              dispatch(setUserLocationBooked(booking));
-            }}
-          >
-            <Text style={{color:"white", fontSize:14, fontWeight:600,}}>View</Text>
-          </TouchableOpacity>
+                 
 
                   </View>
                 </TouchableOpacity>
