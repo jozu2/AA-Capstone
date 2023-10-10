@@ -53,18 +53,19 @@ const ViewUserAccepted = () => {
   }, []);
 
   return (
-    <View style={{ flex: 1, marginTop: 20 }}>
-      <ScrollView style={{ flex: 1}}>
-        <Text
+    <View style={{ flex: 1,height:"100%", borderColor:"blue"}}>
+       <Text
           style={{
             alignSelf: "center",
             fontSize: 20,
-            marginTop: 20,
+            marginTop: 5,
             fontWeight: "bold",
           }}
         >
           Users
         </Text>
+      <ScrollView style={{ height:"25%" , borderColor:"red"}}>
+       
 
         {!filteredBookingData && (
           <Text
@@ -73,7 +74,7 @@ const ViewUserAccepted = () => {
               fontSize: 20,
               color: "red",
               fontWeight: "bold",
-              margin:30,
+              margin:"2%",
             }}
           >
             NO USER ACCEPTED
@@ -127,9 +128,12 @@ const ViewUserAccepted = () => {
                 </TouchableOpacity>
               </View>
             </View>
+
           ))}
-        <View>
-          <Text style={{ alignSelf: "center", fontSize: 20, marginTop: 20 }}>
+        </ScrollView>
+
+        <View style={{ height:"80%"}}>
+          <Text style={{ alignSelf: "center", fontSize: 20, marginTop: 3 }}>
             Comment Section
           </Text>
 
@@ -144,15 +148,15 @@ const ViewUserAccepted = () => {
               <View style={styles.chatbubble}></View>
                       <View style={styles.chatbubble}></View>
           </ScrollView>
-        </View>
-        <View
+          <View
             style={styles.chatinputcontainer}
           >
             <TextInput
             style={{width:"95%",height:"100%" ,marginHorizontal:10, marginTop:0}}></TextInput>
           </View>
-      </ScrollView>
-      <View style={{height:9}}></View>
+        </View>
+       
+
     </View>
   );
 };
@@ -160,11 +164,13 @@ const ViewUserAccepted = () => {
 export default ViewUserAccepted;
 
 const styles = StyleSheet.create({
-  mainContainer: { padding: 10, flex: 1 },
+  mainContainer: { padding: 0, flex: 1 },
   container: {
     backgroundColor: "#fff",
     padding: 8,
     borderRadius: 10,
+   
+   
   },
   nameAndProfileContainer: {
     display: "flex",
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
     borderRadius: 1000,
   },
   chatbubble:{
-     height: 75,
+     height: 70,
     backgroundColor: "#fff",
     borderRadius:10,
     borderColor:"gray",
@@ -198,15 +204,13 @@ const styles = StyleSheet.create({
     elevation: 3
   },
 
-  chatboxconatainer:{ height:490,
+  chatboxconatainer:{ height:"75%",
     backgroundColor: "#fff",
     borderRadius:10,
-    marginBottom:10,
-    paddingTop:0,
-    paddingBottom:0,
+   
     width: "95%",
     alignSelf: "center",
-    marginTop: 20,
+    marginTop: 3,
     shadowColor: "gray",
     shadowOffset: {
         width: 0,
