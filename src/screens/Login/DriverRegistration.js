@@ -13,6 +13,9 @@ const DriverRegistration = () => {
   const [driverId, setDriverId] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [totalRides, setTOtalRIde] = useState(0);
 
   const [showErrorPass, setShowErrorPass] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -34,6 +37,7 @@ const DriverRegistration = () => {
     firstName,
     lastName,
     driverId,
+    address,
     confirmPass,
     mobileNumber
   ) => {
@@ -70,6 +74,9 @@ const DriverRegistration = () => {
                 lastName,
                 email,
                 driverId,
+                address,
+                isVerified,
+                totalRides,
                 mobileNumber,
               });
 
@@ -121,6 +128,17 @@ const DriverRegistration = () => {
             placeholderTextColor="grey"
             returnKeyType="next"
           />
+          <Text style={styles.textTitle}>Address</Text>
+
+          <TextInput
+            style={styles.input}
+            defaultValue={address}
+            onChangeText={(add) => setAddress(add)}
+            autoCorrect={false}
+            placeholder="Set address"
+            placeholderTextColor="grey"
+            returnKeyType="next"
+          />
           <Text style={styles.textTitle}>DHVSU ID No.</Text>
 
           <TextInput
@@ -139,12 +157,13 @@ const DriverRegistration = () => {
             defaultValue={email}
             onChangeText={(email) => setEmail(email)}
             textContentType="emailAddress"
-            placeholder="johndoe@gmail.com"
+            placeholder="johndoe@dhvsu.edu.ph"
             autoCapitalize="none"
             placeholderTextColor="grey"
             keyboardType="email-address"
             returnKeyType="next"
           />
+
           <Text style={styles.textTitle}>Mobile No.</Text>
           <TextInput
             style={styles.input}
@@ -212,6 +231,7 @@ const DriverRegistration = () => {
                   firstName,
                   lastName,
                   driverId,
+                  address,
                   confirmPass,
                   mobileNumber
                 )
@@ -315,7 +335,7 @@ const styles = StyleSheet.create({
   containerTwo: {
     backgroundColor: "white",
     width: "100%",
-    height: 600,
+    height: 666,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },

@@ -4,29 +4,28 @@ import Feather from "react-native-vector-icons/Feather";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { TouchableOpacity } from "react-native-gesture-handler";
 import Entypo from "react-native-vector-icons/Entypo";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/EvilIcons";
 import {
+  selectUserProfile,
   setUserId,
   setUserIsLoggedin,
   setUserProfile,
 } from "../../redux/navSlice";
+import { TouchableOpacity } from "react-native-gesture-handler";
 const CommuterSettings = () => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
-
+  const userProfile = useSelector(selectUserProfile);
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("user");
       await AsyncStorage.removeItem("userInfo");
-      await AsyncStorage.removeItem("userInfo");
-      await AsyncStorage.removeItem("userInfo");
+      await AsyncStorage.removeItem("driverInfo");
+      await AsyncStorage.removeItem("driver");
 
       dispatch(setUserIsLoggedin(""));
       dispatch(setUserProfile(null));
@@ -40,7 +39,7 @@ const CommuterSettings = () => {
     await Linking.openSettings();
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#05131f" }}>
       <View
         style={{
           display: "flex",
@@ -56,18 +55,23 @@ const CommuterSettings = () => {
         <Text
           style={{
             fontSize: 40,
-            color: "#fff",
+            color: "#01ccdd",
             fontWeight: "600",
           }}
         >
           Settings
         </Text>
-        <Feather name="settings" size={50} color={"#fff"} />
+        <Feather
+          name="settings"
+          size={45}
+          color={"#fff"}
+          style={{ paddingTop: 5 }}
+        />
       </View>
 
       <Text
         style={{
-          color: "#fff",
+          color: "#ecca2d",
           marginTop: 30,
           fontSize: 24,
           fontWeight: "500",
@@ -103,7 +107,7 @@ const CommuterSettings = () => {
                 Home
               </Text>
               <Text style={{ color: "#fff", fontSize: 12, fontWeight: "300" }}>
-                Palat, Porac, Pampanga
+                {userProfile?.address}
               </Text>
             </View>
           </Pressable>
@@ -111,7 +115,7 @@ const CommuterSettings = () => {
       </View>
       <View>
         <View>
-          <Pressable
+          <TouchableOpacity
             style={{
               borderColor: "#fff",
               paddingLeft: 30,
@@ -121,6 +125,7 @@ const CommuterSettings = () => {
               paddingRight: 130,
               marginTop: 40,
             }}
+            onPress={openAppSettings}
           >
             <Icon name="location" size={50} color="white" />
             <View style={{ paddingLeft: 5 }}>
@@ -138,7 +143,7 @@ const CommuterSettings = () => {
                 features and functionalities
               </Text>
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View>
@@ -191,10 +196,10 @@ const CommuterSettings = () => {
                 }}
                 onPress={handleLogout}
               >
-                <Entypo name="log-out" size={32} color="#b81c30" />
+                <Entypo name="log-out" size={32} color="#ee005c" />
                 <Text
                   style={{
-                    color: "#b81c30",
+                    color: "#ee005c",
                     fontSize: 19,
                     paddingLeft: 10,
                     fontWeight: "500",

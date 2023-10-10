@@ -14,16 +14,12 @@ const RideSuccess = () => {
     try {
       dispatch(
         setRideInfo({
-          rideData: null,
           rideStarted: false,
         })
       );
-      await AsyncStorage.removeItem("isRideStarted");
-      await AsyncStorage.removeItem("StartRideInfo");
     } catch (error) {
       console.error("Error logging out:", error);
     }
-    console.log("xxxx", x.rideStarted);
     navigation.navigate("DriverHomePage");
   };
   return (

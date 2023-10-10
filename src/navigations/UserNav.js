@@ -15,7 +15,7 @@ const UserNav = () => {
         drawerContent={(props) => <CustomDrawer {...props} />}
         screenOptions={{
           headerShown: false,
-          drawerActiveBackgroundColor: "rgba(0, 0, 0, 0.4)",
+          drawerActiveBackgroundColor: "#081e30",
           drawerActiveTintColor: "white",
           drawerInactiveTintColor: "black",
           drawerLabelStyle: { marginLeft: -18 },
@@ -28,18 +28,10 @@ const UserNav = () => {
             drawerIcon: ({ color }) => (
               <Feather name="home" size={22} color={color} />
             ),
+            drawerLabel: "Home",
           }}
         />
 
-        <Drawer.Screen
-          name="CommuterSettings"
-          component={CommuterSettings}
-          options={{
-            drawerIcon: ({ color }) => (
-              <Feather name="settings" size={22} color={color} />
-            ),
-          }}
-        />
         <Drawer.Screen
           name="CommuterProfile"
           component={UserProfile}
@@ -47,6 +39,17 @@ const UserNav = () => {
             drawerIcon: ({ color }) => (
               <Feather name="user" size={22} color={color} />
             ),
+            drawerLabel: "Profile",
+          }}
+        />
+        <Drawer.Screen
+          name="CommuterSettings"
+          component={CommuterSettings}
+          options={{
+            drawerIcon: ({ color }) => (
+              <Feather name="settings" size={22} color={color} />
+            ),
+            drawerLabel: "Settings",
           }}
         />
       </Drawer.Navigator>

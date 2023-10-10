@@ -10,10 +10,13 @@ const StudentRegistration = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [studentId, setStudentId] = useState("");
+  const [commuterID, setCommuterID] = useState("");
   const navigation = useNavigation();
   const [confirmPass, setConfirmPass] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [totalRides, setTOtalRIde] = useState(0);
 
   const [showErrorPass, setShowErrorPass] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -27,13 +30,14 @@ const StudentRegistration = () => {
       return false;
     }
   };
-
   const registerUser = async (
     email,
     password,
     firstName,
     lastName,
+    address,
     commuterID,
+    confirmPass,
     mobileNumber
   ) => {
     if (!validateEmail(email)) {
@@ -70,6 +74,9 @@ const StudentRegistration = () => {
                 email,
                 commuterID,
                 mobileNumber,
+                isVerified,
+                totalRides,
+                address,
               });
 
             navigation.navigate("HomeLogin");
@@ -118,12 +125,22 @@ const StudentRegistration = () => {
             placeholderTextColor="grey"
             returnKeyType="next"
           />
+          <Text style={styles.textTitle}>Address</Text>
+          <TextInput
+            style={styles.input}
+            defaultValue={address}
+            onChangeText={(add) => setAddress(add)}
+            autoCorrect={false}
+            placeholder="Set address"
+            placeholderTextColor="grey"
+            returnKeyType="next"
+          />
           <Text style={styles.textTitle}>DHVSU ID No.</Text>
           <TextInput
             style={styles.input}
-            defaultValue={studentId}
+            defaultValue={commuterID}
             placeholder="ID number"
-            onChangeText={(studentId) => setStudentId(studentId)}
+            onChangeText={(comid) => setCommuterID(comid)}
             autoCorrect={false}
             placeholderTextColor="grey"
             returnKeyType="next"
@@ -136,7 +153,7 @@ const StudentRegistration = () => {
             textContentType="emailAddress"
             autoCapitalize="none"
             placeholderTextColor="grey"
-            placeholder="johndoe@gmail.com"
+            placeholder="johndoe@dhvsu.edu.ph"
             keyboardType="email-address"
             returnKeyType="next"
           />
@@ -205,7 +222,9 @@ const StudentRegistration = () => {
                   password,
                   firstName,
                   lastName,
-                  studentId,
+                  address,
+                  commuterID,
+                  confirmPass,
                   mobileNumber
                 )
               }
@@ -308,7 +327,7 @@ const styles = StyleSheet.create({
   containerTwo: {
     backgroundColor: "white",
     width: "100%",
-    height: 600,
+    height: 666,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },

@@ -15,16 +15,13 @@ import RideSuccess from "../screens/Driver/RideSuccess";
 const DriverStack = () => {
   const Stack = createStackNavigator();
   const rideInfo = useSelector(selectRideInfo);
-  const isRideStarted = rideInfo?.rideStarted;
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Group>
-        {isRideStarted ? (
-          <Stack.Screen name="RideStart" component={RideStart} />
-        ) : (
-          <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
-        )}
+        <Stack.Screen name="DriverHomePage" component={DriverHomePage} />
+        <Stack.Screen name="RideStart" component={RideStart} />
+
         <Stack.Screen
           name="DriverRideRegistration"
           component={DriverRideRegistration}

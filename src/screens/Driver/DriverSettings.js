@@ -3,19 +3,19 @@ import React from "react";
 import Feather from "react-native-vector-icons/Feather";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  selectUserProfile,
   setUserId,
   setUserIsLoggedin,
   setUserProfile,
 } from "../../redux/navSlice";
 import Entypo from "react-native-vector-icons/Entypo";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/EvilIcons";
 const DriverSettings = () => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
@@ -36,8 +36,11 @@ const DriverSettings = () => {
   const openAppSettings = async () => {
     await Linking.openSettings();
   };
+
+  const userProfile = useSelector(selectUserProfile);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#05131f" }}>
       <View
         style={{
           display: "flex",
@@ -53,18 +56,23 @@ const DriverSettings = () => {
         <Text
           style={{
             fontSize: 40,
-            color: "#fff",
-            fontWeight: "bold",
+            color: "#01ccdd",
+            fontWeight: "600",
           }}
         >
           Settings
         </Text>
-        <Feather name="settings" size={50} color={"#fff"} />
+        <Feather
+          name="settings"
+          size={45}
+          color={"#fff"}
+          style={{ paddingTop: 5 }}
+        />
       </View>
 
       <Text
         style={{
-          color: "#fff",
+          color: "#ecca2d",
           marginTop: 30,
           fontSize: 24,
           fontWeight: "500",
@@ -100,7 +108,7 @@ const DriverSettings = () => {
                 Home
               </Text>
               <Text style={{ color: "#fff", fontSize: 12, fontWeight: "300" }}>
-                Palat, Porac, Pampanga
+                {userProfile?.address}
               </Text>
             </View>
           </Pressable>
@@ -108,7 +116,7 @@ const DriverSettings = () => {
       </View>
       <View>
         <View>
-          <Pressable
+          <TouchableOpacity
             style={{
               borderColor: "#fff",
               paddingLeft: 30,
@@ -118,6 +126,7 @@ const DriverSettings = () => {
               paddingRight: 130,
               marginTop: 40,
             }}
+            onPress={openAppSettings}
           >
             <Icon name="location" size={50} color="white" />
             <View style={{ paddingLeft: 5 }}>
@@ -135,7 +144,7 @@ const DriverSettings = () => {
                 features and functionalities
               </Text>
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View>
@@ -188,10 +197,10 @@ const DriverSettings = () => {
                 }}
                 onPress={handleLogout}
               >
-                <Entypo name="log-out" size={32} color="#b81c30" />
+                <Entypo name="log-out" size={32} color="#ee005c" />
                 <Text
                   style={{
-                    color: "#b81c30",
+                    color: "#ee005c",
                     fontSize: 19,
                     paddingLeft: 10,
                     fontWeight: "500",

@@ -20,15 +20,14 @@ const UserStack = () => {
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="ModalViewCard" component={ModalViewCard} />
+        <Stack.Screen name="ViewRequest" component={ViewRequest} />
       </Stack.Group>
 
       <Stack.Group
         screenOptions={{
           headerShown: true,
         }}
-      >
-        <Stack.Screen name="ViewRequest" component={ViewRequest} />
-      </Stack.Group>
+      ></Stack.Group>
     </Stack.Navigator>
   );
 };

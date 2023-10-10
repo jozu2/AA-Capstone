@@ -1,8 +1,7 @@
-import { View, Text, Pressable, Modal, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../../config";
-import Swiper from "react-native-deck-swiper";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { StyleSheet, Image } from "react-native";
@@ -10,7 +9,6 @@ import tw from "twrnc";
 import Octicons from "react-native-vector-icons/Octicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +27,6 @@ const CommuterHomePage = () => {
   const API_KEY = "AIzaSyCU46T5I3BvJF3_uQHta5XGih_xljGYt-I";
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [selectedCardData, setSelectedCardData] = useState(null);
   const [indexCard, setIndexCard] = useState(null);
 
   const userID = useSelector(selectUserId);
@@ -67,7 +64,6 @@ const CommuterHomePage = () => {
     });
   }, [userID]);
 
-  const swiperRef = useRef(null);
   const handleOpenDrawer = () => {
     navigation.openDrawer();
   };
@@ -103,12 +99,36 @@ const CommuterHomePage = () => {
               backgroundColor: "transparent",
             }}
           />
-          <MaterialIcons name="list-alt" size={35} color={"#ecca2d"} />
+          <TouchableOpacity>
+            <MaterialIcons
+              name="list-alt"
+              size={35}
+              color={"#ecca2d"}
+              onPress={() => {
+                navigation.navigate("ViewRequest");
+              }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
+
       <LinearGradient
         colors={["#15b99e", "#081e30"]}
-        style={[tw`shadow-lg`, styles.topBar]}
+        style={[
+          tw`shadow-lg`,
+          {
+            backgroundColor: "#fff",
+            width: "100%",
+            position: "absolute",
+            zIndex: 20000,
+            paddingTop: "10%",
+            paddingBottom: "5%",
+            borderTopWidth: 0,
+            borderRightWidth: 0,
+            borderLeftWidth: 0,
+            borderBottomColor: "#b5b5b5",
+          },
+        ]}
       >
         <EvilIcons
           style={{ position: "absolute", bottom: 25, left: 10 }}
@@ -123,11 +143,32 @@ const CommuterHomePage = () => {
         />
         <View style={{ position: "absolute", right: -20, bottom: 25 }}></View>
       </LinearGradient>
+      {fetchedData.length == 0 && (
+        <View
+          style={{
+            position: "absolute",
+            alignSelf: "center",
+            top: 200,
+            zIndex: 500000,
+          }}
+        >
+          <Text style={{ color: "#fff", fontSize: 20 }}>No Data</Text>
+        </View>
+      )}
       <ScrollView style={{ flex: 1, backgroundColor: "#2e3b45", padding: 10 }}>
         {fetchedData.map((card, index) => {
           return (
             <View key={index}>
-              <View>
+              <TouchableOpacity
+                onPress={() => {
+                  if (fetchedData.length === 0) {
+                    return;
+                  } else {
+                    dispatch(setCardData(card));
+                    navigation.navigate("ModalViewCard");
+                  }
+                }}
+              >
                 <View style={[tw`shadow-lg`, styles.MainCardContainer]}>
                   <View
                     style={{
@@ -249,7 +290,18 @@ const CommuterHomePage = () => {
                           description={card.coordinates.origin.location}
                           identifier="origin"
                           pinColor="green"
-                        ></Marker>
+                        >
+                          <Image
+                            source={require("./../../assets/iconOrigin.png")}
+                            style={{
+                              width: 55,
+                              height: 55,
+                              alignSelf: "center",
+                              position: "absolute",
+                              bottom: 0,
+                            }}
+                          />
+                        </Marker>
 
                         <Marker
                           style={{ width: 200, height: 200 }}
@@ -261,7 +313,18 @@ const CommuterHomePage = () => {
                           description={card.coordinates.destination.location}
                           identifier="destination"
                           pinColor="red"
-                        ></Marker>
+                        >
+                          <Image
+                            source={require("./../../assets/iconDestination.png")}
+                            style={{
+                              width: 55,
+                              height: 55,
+                              alignSelf: "center",
+                              position: "absolute",
+                              bottom: 0,
+                            }}
+                          />
+                        </Marker>
 
                         <MapViewDirections
                           origin={{
@@ -376,7 +439,7 @@ const CommuterHomePage = () => {
                       >{`${card.Schedule.occupiedSeat} / ${card.Schedule.seatAvailable}`}</Text>
                     </View>
                   </View>
-                  <View
+                  <TouchableOpacity
                     style={{
                       paddingVertical: 10,
                     }}
@@ -414,9 +477,9 @@ const CommuterHomePage = () => {
                         />
                       )}
                     </TouchableOpacity>
-                  </View>
+                  </TouchableOpacity>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           );
         })}

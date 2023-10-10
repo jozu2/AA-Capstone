@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { useSelector } from "react-redux";
 import {
   selectUserId,
@@ -12,8 +12,11 @@ import MapViewDirections from "react-native-maps-directions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { get, ref, set } from "firebase/database";
+import { ref, set } from "firebase/database";
 import { db } from "../../../config";
+import { LinearGradient } from "expo-linear-gradient";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import tw from "twrnc";
 const ModalViewCard = () => {
   const cardData = useSelector(selectedCardData);
   const navigation = useNavigation();
@@ -62,7 +65,7 @@ const ModalViewCard = () => {
   const userID = useSelector(selectUserId);
   const userName = `${userProfile?.firstName} ${userProfile?.lastName}`;
 
-  const DriverPostID = `${cardData.driverProfile.UID}${cardData.driverProfile.postID}`;
+  const DriverPostID = `${cardData?.driverProfile.UID}${cardData.driverProfile.postID}`;
 
   const handleRequestRide = () => {
     if (cardData && userProfile && centerLocation) {
@@ -124,6 +127,39 @@ const ModalViewCard = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <LinearGradient
+        colors={["#15b99e", "#081e30"]}
+        style={[
+          tw`shadow-lg`,
+          {
+            backgroundColor: "#fff",
+            width: "100%",
+            position: "absolute",
+            zIndex: 20000,
+            paddingTop: "10%",
+            paddingBottom: "5%",
+            borderTopWidth: 0,
+            borderRightWidth: 0,
+            borderLeftWidth: 0,
+            borderBottomColor: "#b5b5b5",
+          },
+        ]}
+      >
+        <MaterialCommunityIcons
+          style={{ position: "absolute", bottom: 25, left: 10 }}
+          name={"arrow-left"}
+          size={40}
+          color={"#fff"}
+          onPress={() => {
+            navigation.navigate("CommuterHomePage");
+          }}
+        />
+        <Image
+          source={require("./../../assets/IconC.png")}
+          style={{ width: 60, height: 60, alignSelf: "center" }}
+        />
+        <View style={{ position: "absolute", right: -20, bottom: 25 }}></View>
+      </LinearGradient>
       {isSet && (
         <View
           style={{
@@ -140,7 +176,7 @@ const ModalViewCard = () => {
               backgroundColor: "#fff",
               padding: 10,
               borderWidth: 1,
-              marginTop: 20,
+              marginTop: 100,
             }}
           >
             <Text>{`Pickup Location: ${rideInfo.description}`}</Text>
@@ -210,30 +246,22 @@ const ModalViewCard = () => {
       )}
       <View style={{ flex: 1 }}>
         {!isSet && (
-          <View>
-            <Text
-              style={{
-                paddingTop: 10,
-                fontSize: 13,
-                fontWeight: "600",
-              }}
-            >
-              Passenger Count
-            </Text>
+          <View style={{ position: "absolute", alignSelf: "center", top: 120 }}>
             <TextInput
-              placeholder={"No. of Available Seat"}
+              placeholder={"No. of Passenger"}
               value={numberOfPassenger}
               style={{
-                width: "100%",
+                width: 250,
                 color: "green",
                 borderRadius: 7,
                 textAlign: "center",
                 fontSize: 17,
-                borderWidth: 1,
-                borderBottomColor: "#121212",
+                borderWidth: 2,
+                borderBottomColor: "#ee005c",
                 borderTopWidth: 0,
                 borderLeftWidth: 0,
                 borderRightWidth: 0,
+                backgroundColor: "#fff",
               }}
               onChangeText={(text) => {
                 const numericText = text.replace(/[^0-9]/g, "");
@@ -247,6 +275,17 @@ const ModalViewCard = () => {
               maxLength={1}
               keyboardType="numeric"
             />
+            <Text
+              style={{
+                paddingTop: 10,
+                fontSize: 13,
+                fontWeight: "600",
+                lineHeight: 13,
+                color: "#001c2e",
+              }}
+            >
+              Passenger Count
+            </Text>
           </View>
         )}
 
@@ -276,7 +315,18 @@ const ModalViewCard = () => {
             description={cardData.coordinates.origin.location}
             identifier="origin"
             pinColor="green"
-          ></Marker>
+          >
+            <Image
+              source={require("./../../assets/iconOrigin.png")}
+              style={{
+                width: 55,
+                height: 55,
+                alignSelf: "center",
+                position: "absolute",
+                bottom: 0,
+              }}
+            />
+          </Marker>
           <Marker
             style={{ width: 200, height: 200 }}
             coordinate={{
@@ -287,7 +337,18 @@ const ModalViewCard = () => {
             description={cardData.coordinates.destination.location}
             identifier="destination"
             pinColor="red"
-          ></Marker>
+          >
+            <Image
+              source={require("./../../assets/iconDestination.png")}
+              style={{
+                width: 55,
+                height: 55,
+                alignSelf: "center",
+                position: "absolute",
+                bottom: 0,
+              }}
+            />
+          </Marker>
           {!isLoading && numberOfPassenger !== "" && (
             <Marker
               style={{ width: 200, height: 200 }}
@@ -297,7 +358,18 @@ const ModalViewCard = () => {
               }}
               title="Pickup"
               pinColor="blue"
-            ></Marker>
+            >
+              <Image
+                source={require("./../../assets/userPickUp.png")}
+                style={{
+                  width: 55,
+                  height: 55,
+                  alignSelf: "center",
+                  position: "absolute",
+                  bottom: 0,
+                }}
+              />
+            </Marker>
           )}
 
           <MapViewDirections
@@ -321,7 +393,7 @@ const ModalViewCard = () => {
               // const distanceInKilometers = distance / 1000;
               mapRef.current.fitToCoordinates(result.coordinates, {
                 edgePadding: {
-                  top: 30,
+                  top: 100,
                   right: 10,
                   bottom: 0,
                   left: 10,
